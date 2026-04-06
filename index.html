@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rambo Fitness Plan</title>
+<link rel="stylesheet" href="styles.css">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#ff0000">
+</head>
+
+<body>
+
+<header>
+  <h1>RAMBO FITNESS PLAN</h1>
+  <p>35 Day Muscle Endurance Program</p>
+</header>
+
+<section class="hero">
+  <h2>Train Hard. Build Endurance.</h2>
+  <p>Follow the full 35 day program and transform your fitness.</p>
+  <button onclick="scrollToWorkouts()">Start Training</button>
+</section>
+
+<!-- PROGRESS BAR -->
+<div class="progress-container">
+  <div id="progressBar"></div>
+</div>
+
+<section id="workouts" class="workouts">
+  <h2>Workout Plan</h2>
+
+  <!-- DAY NAVIGATION -->
+  <div class="day-navigation">
+    <button onclick="prevDay()">⬅ Prev</button>
+    <h3 id="dayTitle"></h3>
+    <button onclick="nextDay()">Next ➡</button>
+  </div>
+
+  <!-- SINGLE DAY WORKOUT RENDERS HERE -->
+  <div id="workoutContainer"></div>
+
+</section>
+
+<footer>
+  <p>Created by Angel Jimenez</p>
+</footer>
+
+
+<script src="workouts.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+<script src="script.js"></script>
+
+</body>
+</html>
