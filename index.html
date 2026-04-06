@@ -13,16 +13,15 @@
 
 <header>
   <h1>RAMBO FITNESS PLAN</h1>
-  <p>35 Day Muscle Endurance Program</p>
+  <p>7-week Muscle Endurance Program</p>
 </header>
 
 <section class="hero">
-  <h2>Train Hard. Build Endurance.</h2>
-  <p>Follow the full 35 day program and transform your fitness.</p>
+  <h2>Train Hard. Build Endurance. Track Your Progress.</h2>
+  <p>Follow the full 7-week program and transform your fitness.</p>
   <button onclick="scrollToWorkouts()">Start Training</button>
 </section>
 
-<!-- PROGRESS BAR -->
 <div class="progress-container">
   <div id="progressBar"></div>
 </div>
@@ -30,22 +29,21 @@
 <section id="workouts" class="workouts">
   <h2>Workout Plan</h2>
 
-  <!-- DAY NAVIGATION -->
-  <div class="day-navigation">
-    <button onclick="prevDay()">⬅ Prev</button>
-    <h3 id="dayTitle"></h3>
-    <button onclick="nextDay()">Next ➡</button>
+  <div class="navigation-buttons">
+    <button id="prevBtn">⬅ Previous Day</button>
+    <button id="nextBtn">Next Day ➡</button>
+    <button id="resetProgress" title="Click to reset all progress and start fresh">Reset Progress</button>
   </div>
 
-  <!-- SINGLE DAY WORKOUT RENDERS HERE -->
   <div id="workoutContainer"></div>
-
 </section>
 
 <footer>
   <p>Created by Angel Jimenez</p>
+  <p style="font-size:0.85rem; color: #aaa; margin-top: 10px;">
+    ⚠️ Disclaimer: I am not a certified fitness professional. These workouts are based on my personal routine. Please consult a doctor before starting any new exercise program.
+  </p>
 </footer>
-
 
 <script src="workouts.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
