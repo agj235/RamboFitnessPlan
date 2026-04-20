@@ -6,9 +6,9 @@
 <title>Rambo Fitness Plan</title>
 <link rel="stylesheet" href="styles.css">
 <link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="fitnessLogo2.png">
-<link rel="icon" type="image/png" href="fitnessLogo2.png">
-<link rel="apple-touch-icon" sizes="180x180" href="fitnessLogo2.png">
+<link rel="apple-touch-icon" href="/fitnessLogo2.png">
+<link rel="icon" type="image/png" href="/fitnessLogo2.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/fitnessLogo2.png">
 <meta name="theme-color" content="#ff0000">
 </head>
 
@@ -25,6 +25,10 @@
   <button onclick="scrollToWorkouts()">Start Training</button>
 </section>
 
+<div class="progress-container">
+  <div id="progressBar"></div>
+</div>
+
 <section id="workouts" class="workouts">
   <h2>Workout Plan</h2>
 
@@ -35,10 +39,42 @@
   </div>
 
   <div id="workoutContainer"></div>
-  <div class="progress-container">
-    <div id="progressBar"></div>
-  </div>
 </section>
+
+<div id="dashboard" class="dashboard">
+
+  <h2>📊 Fitness Dashboard</h2>
+
+  <div class="ring-wrap">
+    <svg width="140" height="140">
+      <circle class="bg" cx="70" cy="70" r="60"></circle>
+      <circle class="progress" cx="70" cy="70" r="60"></circle>
+    </svg>
+    <div class="ring-text">
+      <span id="dashPercent">0%</span>
+      <small>Progress</small>
+    </div>
+  </div>
+
+  <div class="dash-stats">
+    <div>📅 Day: <span id="dashDay"></span></div>
+    <div>🏋️ Completed: <span id="dashCompleted"></span></div>
+    <div>🔥 Streak: <span id="dashStreak">0</span> days</div>
+  </div>
+
+  <div id="dashWeeks" class="week-grid"></div>
+
+</div>
+
+<svg width="0" height="0">
+  <defs>
+    <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f7e7a1" />
+      <stop offset="50%" stop-color="#d4af37" />
+      <stop offset="100%" stop-color="#b8860b" />
+    </linearGradient>
+  </defs>
+</svg>
 
 <footer>
   <p>Created by Angel Jimenez</p>
