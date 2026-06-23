@@ -56,28 +56,46 @@ auth.onAuthStateChanged(user => {
 // LOGIN / LOGOUT
 // =========================
 function login() {
+
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
 
-  if (!email || !password) {
-    document.getElementById("loginStatus").innerText =
-      "Please enter email and password";
-    return;
-  }
-
   auth.signInWithEmailAndPassword(email, password)
-    .then(() => {
-      document.getElementById("loginStatus").innerText = "Logged in!";
-    })
-    .catch(err => {
-      document.getElementById("loginStatus").innerText = err.message;
+    .catch(error => {
+
+      document.getElementById("loginStatus").innerText =
+        error.message;
+
     });
+
 }
 
 function logout() {
   auth.signOut();
 }
+// =========================
+// REGISTER
+// =========================
+function register() {
 
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+
+  auth.createUserWithEmailAndPassword(email, password)
+    .then((userCredential) => {
+
+      document.getElementById("loginStatus").innerText =
+        "Account created successfully!";
+
+    })
+    .catch(error => {
+
+      document.getElementById("loginStatus").innerText =
+        error.message;
+
+    });
+
+}
 // =========================
 // PROGRAM
 // =========================
