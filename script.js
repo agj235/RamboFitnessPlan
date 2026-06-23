@@ -31,33 +31,29 @@ let currentDay = 1;
 const workoutContainer = document.getElementById("workoutContainer");
 const authMessage = document.getElementById("authMessage");
 const loginModal = document.getElementById("loginModal");
+const loadingScreen = document.getElementById("loadingScreen");
 
 // =========================
-// MODAL HELPERS
+// INIT UI STATE (PREVENT FLASH)
 // =========================
-function showLoginModal() {
-  loginModal.style.display = "flex";
-}
-
-function hideLoginModal() {
-  loginModal.style.display = "none";
-}
-
-// Show modal immediately on load (prevents blank UI)
 window.addEventListener("load", () => {
-  showLoginModal();
+  if (loadingScreen) loadingScreen.style.display = "flex";
+  if (loginModal) loginModal.style.display = "none";
 });
 
 // =========================
-// AUTH STATE
+// FIREBASE AUTH STATE
 // =========================
 auth.onAuthStateChanged(user => {
   currentUser = user;
 
+  // hide loading screen once Firebase responds
+  if (loadingScreen) loadingScreen.style.display = "none";
+
   if (user) {
     isLoggedIn = true;
 
-    hideLoginModal();
+    if (loginModal) loginModal.style.display = "none";
 
     loadCloud();
     showDay(currentDay);
@@ -65,7 +61,7 @@ auth.onAuthStateChanged(user => {
   } else {
     isLoggedIn = false;
 
-    showLoginModal();
+    if (loginModal) loginModal.style.display = "flex";
 
     workoutContainer.innerHTML =
       `<div class="day-card"><h3>🔒 Login to view workouts</h3></div>`;
@@ -73,6 +69,17 @@ auth.onAuthStateChanged(user => {
     authMessage.innerText = "Please log in to continue";
   }
 });
+
+// =========================
+// MODAL HELPERS
+// =========================
+function showLoginModal() {
+  if (loginModal) loginModal.style.display = "flex";
+}
+
+function hideLoginModal() {
+  if (loginModal) loginModal.style.display = "none";
+}
 
 // =========================
 // LOGIN
@@ -85,14 +92,6 @@ function login() {
     .catch(error => {
       document.getElementById("loginStatus").innerText = error.message;
     });
-}
-
-// =========================
-// LOGOUT
-// =========================
-function logout() {
-  auth.signOut();
-  showLoginModal();
 }
 
 // =========================
@@ -113,7 +112,15 @@ function register() {
 }
 
 // =========================
-// PROGRAM
+// LOGOUT
+// =========================
+function logout() {
+  auth.signOut();
+  showLoginModal();
+}
+
+// =========================
+// PROGRAM SWITCHING
 // =========================
 function refreshProgram() {
   currentWorkouts = currentProgram === "4day" ? workouts4Day : workouts;
@@ -137,7 +144,7 @@ function scrollToWorkouts() {
 }
 
 // =========================
-// RENDER
+// RENDER WORKOUT
 // =========================
 function showDay(day) {
   if (!isLoggedIn) return;
@@ -193,7 +200,7 @@ function updateProgress() {
 }
 
 // =========================
-// NAV
+// NAVIGATION
 // =========================
 document.getElementById("prevBtn").onclick = () => {
   if (!isLoggedIn) return;
@@ -219,7 +226,7 @@ document.getElementById("resetProgress").onclick = () => {
 };
 
 // =========================
-// CLOUD SAVE
+// CLOUD SAVE / LOAD
 // =========================
 function saveCloud(key, value) {
   if (!currentUser) return;
