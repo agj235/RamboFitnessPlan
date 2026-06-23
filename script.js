@@ -22,7 +22,7 @@ let currentUser = null;
 let isLoggedIn = false;
 
 let currentProgram = localStorage.getItem("currentProgram") || "5day";
-let currentWorkouts = currentProgram === "4day" ? workouts4Day : workouts;
+let currentWorkouts = [];
 let currentDay = 1;
 
 // =========================
@@ -34,7 +34,7 @@ const loginModal = document.getElementById("loginModal");
 const loadingScreen = document.getElementById("loadingScreen");
 
 // =========================
-// INIT UI STATE (PREVENT FLASH)
+// INIT UI
 // =========================
 window.addEventListener("load", () => {
   if (loadingScreen) loadingScreen.style.display = "flex";
@@ -42,12 +42,11 @@ window.addEventListener("load", () => {
 });
 
 // =========================
-// FIREBASE AUTH STATE
+// AUTH STATE
 // =========================
 auth.onAuthStateChanged(user => {
   currentUser = user;
 
-  // hide loading screen once Firebase responds
   if (loadingScreen) loadingScreen.style.display = "none";
 
   if (user) {
@@ -55,6 +54,7 @@ auth.onAuthStateChanged(user => {
 
     if (loginModal) loginModal.style.display = "none";
 
+    refreshProgram();
     loadCloud();
     showDay(currentDay);
 
@@ -71,86 +71,35 @@ auth.onAuthStateChanged(user => {
 });
 
 // =========================
-// MODAL HELPERS
-// =========================
-function showLoginModal() {
-  if (loginModal) loginModal.style.display = "flex";
-}
-
-function hideLoginModal() {
-  if (loginModal) loginModal.style.display = "none";
-}
-
-// =========================
-// LOGIN
-// =========================
-function login() {
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
-
-  auth.signInWithEmailAndPassword(email, password)
-    .catch(error => {
-      document.getElementById("loginStatus").innerText = error.message;
-    });
-}
-
-// =========================
-// REGISTER
-// =========================
-function register() {
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
-
-  auth.createUserWithEmailAndPassword(email, password)
-    .then(() => {
-      document.getElementById("loginStatus").innerText =
-        "Account created successfully!";
-    })
-    .catch(error => {
-      document.getElementById("loginStatus").innerText = error.message;
-    });
-}
-
-// =========================
-// LOGOUT
-// =========================
-function logout() {
-  auth.signOut();
-  showLoginModal();
-}
-
-// =========================
-// PROGRAM SWITCHING
+// SAFETY LOAD WORKOUTS
 // =========================
 function refreshProgram() {
-  currentWorkouts = currentProgram === "4day" ? workouts4Day : workouts;
-}
+  const w = window.workouts;
+  const w4 = window.workouts4Day;
 
-document.getElementById("programSelect").addEventListener("change", e => {
-  currentProgram = e.target.value;
-  localStorage.setItem("currentProgram", currentProgram);
-
-  refreshProgram();
-  currentDay = 1;
-  showDay(currentDay);
-});
-
-// =========================
-// SCROLL
-// =========================
-function scrollToWorkouts() {
-  document.getElementById("workouts")
-    .scrollIntoView({ behavior: "smooth" });
+  if (currentProgram === "4day" && Array.isArray(w4)) {
+    currentWorkouts = w4;
+  } else if (Array.isArray(w)) {
+    currentWorkouts = w;
+  } else {
+    console.error("Workout files not loaded correctly");
+    currentWorkouts = [];
+  }
 }
 
 // =========================
-// RENDER WORKOUT
+// SHOW DAY (SAFE VERSION)
 // =========================
 function showDay(day) {
   if (!isLoggedIn) return;
 
-  const w = currentWorkouts[day - 1];
-  workoutContainer.innerHTML = "";
+  const w = currentWorkouts?.[day - 1];
+
+  if (!w) {
+    workoutContainer.innerHTML =
+      `<div class="day-card"><h3>No workout data found</h3></div>`;
+    return;
+  }
 
   let html = `<div class="day-card">
     <h3>Day ${w.day} - ${w.title}</h3>
@@ -182,7 +131,6 @@ function showDay(day) {
 // =========================
 function updateProgress() {
   const boxes = document.querySelectorAll("input[type='checkbox']");
-
   let completed = 0;
 
   boxes.forEach(b => {
@@ -200,57 +148,40 @@ function updateProgress() {
 }
 
 // =========================
-// NAVIGATION
+// LOGIN
 // =========================
-document.getElementById("prevBtn").onclick = () => {
-  if (!isLoggedIn) return;
-  if (currentDay > 1) showDay(--currentDay);
-};
+function login() {
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
 
-document.getElementById("nextBtn").onclick = () => {
-  if (!isLoggedIn) return;
-  if (currentDay < currentWorkouts.length) showDay(++currentDay);
-};
-
-// =========================
-// RESET
-// =========================
-document.getElementById("resetProgress").onclick = () => {
-  if (!confirm("Reset progress?")) return;
-
-  Object.keys(localStorage).forEach(k => {
-    if (k.includes("-e")) localStorage.removeItem(k);
-  });
-
-  showDay(currentDay);
-};
-
-// =========================
-// CLOUD SAVE / LOAD
-// =========================
-function saveCloud(key, value) {
-  if (!currentUser) return;
-
-  db.collection("users").doc(currentUser.uid).set({
-    [key]: value
-  }, { merge: true });
+  auth.signInWithEmailAndPassword(email, password)
+    .catch(err => {
+      document.getElementById("loginStatus").innerText = err.message;
+    });
 }
 
-function loadCloud() {
-  if (!currentUser) return;
+// =========================
+// REGISTER
+// =========================
+function register() {
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
 
-  db.collection("users").doc(currentUser.uid).get()
-    .then(doc => {
-      if (doc.exists) {
-        const data = doc.data();
-
-        Object.keys(data).forEach(k => {
-          localStorage.setItem(k, data[k]);
-        });
-
-        showDay(currentDay);
-      }
+  auth.createUserWithEmailAndPassword(email, password)
+    .then(() => {
+      document.getElementById("loginStatus").innerText =
+        "Account created!";
+    })
+    .catch(err => {
+      document.getElementById("loginStatus").innerText = err.message;
     });
+}
+
+// =========================
+// LOGOUT
+// =========================
+function logout() {
+  auth.signOut();
 }
 
 // =========================

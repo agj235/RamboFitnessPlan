@@ -1,4 +1,4 @@
-const weeks5Day = [
+window.workouts5Day = [
   {
     days: [
       { day: 1, title: "Cardio & Core", exercises: ["Treadmill Run or Incline Walk - 20 minutes", "Double Kettlebell Swings - 5x10", "Ab Curls - 3x20", "Leg Raises - 3x20", "Plank - 2 min 30 sec hold"] },
