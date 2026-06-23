@@ -7,23 +7,21 @@
 
 <link rel="stylesheet" href="styles.css">
 <link rel="manifest" href="manifest.json">
-
 <meta name="theme-color" content="#ff0000">
 </head>
 
 <body>
-<!-- =========================
-LOGIN MODAL
-========================= -->
+
+<!-- LOGIN MODAL -->
 <div id="loginModal" class="login-modal">
   <div class="login-box">
     <h2>🐺 Rambo Fitness Login</h2>
 
-    <input type="email" id="email" placeholder="Email" />
-    <input type="password" id="password" placeholder="Password" />
+    <input type="email" id="email" placeholder="Email">
+    <input type="password" id="password" placeholder="Password">
 
     <button onclick="login()">Login</button>
-    <button onclick="logout()" class="logout-btn">Logout</button>
+    <button onclick="logout()">Logout</button>
 
     <p id="loginStatus"></p>
   </div>
@@ -44,7 +42,7 @@ LOGIN MODAL
   <button onclick="scrollToWorkouts()">Start Training</button>
 </section>
 
-<div id="authMessage" style="text-align:center; margin:15px; color:#d4af37;"></div>
+<div id="authMessage" style="text-align:center;color:#d4af37;"></div>
 
 <div class="progress-container">
   <div id="progressBar"></div>
@@ -56,22 +54,22 @@ LOGIN MODAL
   <div class="program-selector">
     <label>Choose Program:</label>
     <select id="programSelect">
-      <option value="5day">5-Day Rambo Program</option>
-      <option value="4day">4-Day Rambo Program</option>
+      <option value="5day">5-Day Program</option>
+      <option value="4day">4-Day Program</option>
     </select>
   </div>
 
   <div class="navigation-buttons">
     <button id="prevBtn">⬅ Previous Day</button>
     <button id="nextBtn">Next Day ➡</button>
-    <button id="resetProgress">Reset Progress</button>
+    <button id="resetProgress">Reset</button>
   </div>
 
   <div id="workoutContainer"></div>
 </section>
 
-<div id="dashboard" class="dashboard">
-  <h2>📊 Fitness Dashboard</h2>
+<div class="dashboard">
+  <h2>📊 Dashboard</h2>
 
   <div class="ring-wrap">
     <svg width="140" height="140">
@@ -81,22 +79,20 @@ LOGIN MODAL
 
     <div class="ring-text">
       <span id="dashPercent">0%</span>
-      <small>Progress</small>
     </div>
   </div>
 
   <div class="dash-stats">
-    <div>📅 Day: <span id="dashDay"></span></div>
-    <div>🏋️ Completed: <span id="dashCompleted"></span></div>
-    <div>🔥 Streak: <span id="dashStreak">0</span></div>
+    <div>Day: <span id="dashDay"></span></div>
+    <div>Completed: <span id="dashCompleted"></span></div>
   </div>
-
-  <div id="dashWeeks" class="week-grid"></div>
 </div>
 
+<!-- Firebase COMPAT ONLY -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
 <script src="workouts.js"></script>
 <script src="workouts4day.js"></script>
 <script src="script.js"></script>

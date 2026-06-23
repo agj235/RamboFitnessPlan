@@ -5,7 +5,7 @@ const firebaseConfig = {
   apiKey: "AIzaSyARCnBdNuUfPNtZ_otEn-MWpktzShD_NWE",
   authDomain: "rambofitness-81303.firebaseapp.com",
   projectId: "rambofitness-81303",
-  storageBucket: "rambofitness-81303.firebasestorage.app",
+  storageBucket: "rambofitness-81303.appspot.com",
   messagingSenderId: "3674488945",
   appId: "1:3674488945:web:58e907ce543b1b87bbdbd0"
 };
@@ -16,14 +16,6 @@ const auth = firebase.auth();
 const db = firebase.firestore();
 
 // =========================
-// DOM SAFE INIT
-// =========================
-const workoutContainer = document.getElementById("workoutContainer");
-const programSelect = document.getElementById("programSelect");
-const prevBtn = document.getElementById("prevBtn");
-const nextBtn = document.getElementById("nextBtn");
-
-// =========================
 // STATE
 // =========================
 let currentUser = null;
@@ -31,119 +23,101 @@ let isLoggedIn = false;
 
 let currentProgram = localStorage.getItem("currentProgram") || "5day";
 
-let currentWorkouts = [];
+let currentWorkouts = currentProgram === "4day" ? workouts4Day : workouts;
+
 let currentDay = 1;
-let totalDays = 0;
 
 // =========================
-// LOGIN UI FUNCTIONS (GLOBAL SAFE)
+// ELEMENTS
 // =========================
-window.login = function () {
-  const email = prompt("Email:");
-  const password = prompt("Password:");
-
-  auth.signInWithEmailAndPassword(email, password)
-    .catch(err => alert(err.message));
-};
-
-window.logout = function () {
-  auth.signOut();
-};
+const workoutContainer = document.getElementById("workoutContainer");
+const authMessage = document.getElementById("authMessage");
 
 // =========================
-// AUTH STATE LISTENER
+// AUTH STATE
 // =========================
 auth.onAuthStateChanged(user => {
   currentUser = user;
-  isLoggedIn = !!user;
 
   if (user) {
-    loadCloudData();
-    initProgram();
+    isLoggedIn = true;
+    document.getElementById("loginModal").style.display = "none";
+    loadCloud();
+    showDay(currentDay);
   } else {
-    showLoggedOutUI();
+    isLoggedIn = false;
+    workoutContainer.innerHTML =
+      `<div class="day-card"><h3>🔒 Login to view workouts</h3></div>`;
+    authMessage.innerText = "Please log in to continue";
   }
 });
 
 // =========================
-// LOGGED OUT UI
+// LOGIN / LOGOUT
 // =========================
-function showLoggedOutUI() {
-  if (!workoutContainer) return;
+function login() {
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
 
-  workoutContainer.innerHTML = `
-    <div class="day-card">
-      <h3>🔒 Please login to view workouts</h3>
-      <p>Track your progress by signing in.</p>
-    </div>
-  `;
+  auth.signInWithEmailAndPassword(email, password)
+    .catch(err => alert(err.message));
+}
+
+function logout() {
+  auth.signOut();
 }
 
 // =========================
-// PROGRAM SETUP
+// PROGRAM
 // =========================
-function initProgram() {
-  refreshProgram();
-
-  const savedDay = localStorage.getItem(`rambo_${currentProgram}_day`);
-  currentDay = savedDay ? parseInt(savedDay) : 1;
-
-  showDay(currentDay);
-}
-
 function refreshProgram() {
   currentWorkouts = currentProgram === "4day" ? workouts4Day : workouts;
-  totalDays = currentWorkouts?.length || 0;
+}
+
+document.getElementById("programSelect").addEventListener("change", e => {
+  currentProgram = e.target.value;
+  localStorage.setItem("currentProgram", currentProgram);
+
+  refreshProgram();
+  currentDay = 1;
+  showDay(currentDay);
+});
+
+// =========================
+// SCROLL
+// =========================
+function scrollToWorkouts() {
+  document.getElementById("workouts")
+    .scrollIntoView({ behavior: "smooth" });
 }
 
 // =========================
-// PROGRAM SWITCH
-// =========================
-if (programSelect) {
-  programSelect.value = currentProgram;
-
-  programSelect.addEventListener("change", () => {
-    currentProgram = programSelect.value;
-    localStorage.setItem("currentProgram", currentProgram);
-
-    initProgram();
-  });
-}
-
-// =========================
-// RENDER DAY
+// RENDER
 // =========================
 function showDay(day) {
-  if (!isLoggedIn || !currentWorkouts.length) return;
+  if (!isLoggedIn) return;
 
   const w = currentWorkouts[day - 1];
-  if (!w) return;
-
   workoutContainer.innerHTML = "";
 
-  let exercisesHTML = "";
+  let html = `<div class="day-card">
+    <h3>Day ${w.day} - ${w.title}</h3>
+    <ul>`;
 
   w.exercises.forEach((ex, i) => {
-    const id = `day${w.day}-ex${i}`;
-    const saved = localStorage.getItem(getKey(id)) === "true";
+    const id = `d${w.day}-e${i}`;
+    const checked = localStorage.getItem(id) === "true";
 
-    exercisesHTML += `
+    html += `
       <li>
-        <input type="checkbox" id="${id}" ${saved ? "checked" : ""}>
+        <input type="checkbox" id="${id}" ${checked ? "checked" : ""}>
         <label for="${id}">${ex}</label>
-      </li>
-    `;
+      </li>`;
   });
 
-  const card = document.createElement("div");
-  card.classList.add("day-card");
+  html += `</ul></div>`;
 
-  card.innerHTML = `
-    <h3>Day ${w.day} – ${w.title}</h3>
-    <ul>${exercisesHTML}</ul>
-  `;
-
-  workoutContainer.appendChild(card);
+  workoutContainer.innerHTML = html;
 
   document.querySelectorAll("input[type='checkbox']").forEach(box => {
     box.addEventListener("change", updateProgress);
@@ -153,118 +127,82 @@ function showDay(day) {
 }
 
 // =========================
-// STORAGE KEY
-// =========================
-function getKey(key) {
-  return `rambo_${currentProgram}_${key}`;
-}
-
-// =========================
 // PROGRESS
 // =========================
-function getStats() {
-  let total = 0;
-  let completed = 0;
-
-  currentWorkouts.forEach(day => {
-    total += day.exercises.length;
-
-    day.exercises.forEach((_, i) => {
-      const id = `day${day.day}-ex${i}`;
-      if (localStorage.getItem(getKey(id)) === "true") {
-        completed++;
-      }
-    });
-  });
-
-  return { total, completed };
-}
-
 function updateProgress() {
   const boxes = document.querySelectorAll("input[type='checkbox']");
 
-  boxes.forEach(b => {
-    localStorage.setItem(getKey(b.id), b.checked);
+  let completed = 0;
 
-    if (currentUser) {
-      saveToCloud(b.id, b.checked);
-    }
+  boxes.forEach(b => {
+    localStorage.setItem(b.id, b.checked);
+    if (b.checked) completed++;
   });
 
-  const { total, completed } = getStats();
+  const total = boxes.length;
   const percent = total ? Math.round((completed / total) * 100) : 0;
 
-  const bar = document.getElementById("progressBar");
-  if (bar) bar.style.width = percent + "%";
-
-  const dashPercent = document.getElementById("dashPercent");
-  const dashCompleted = document.getElementById("dashCompleted");
-
-  if (dashPercent) dashPercent.innerText = percent + "%";
-  if (dashCompleted) dashCompleted.innerText = `${completed}/${total}`;
+  document.getElementById("progressBar").style.width = percent + "%";
+  document.getElementById("dashPercent").innerText = percent + "%";
+  document.getElementById("dashCompleted").innerText =
+    `${completed}/${total}`;
 }
 
 // =========================
-// NAVIGATION
+// NAV
 // =========================
-if (prevBtn) {
-  prevBtn.onclick = () => {
-    if (currentDay > 1) {
-      currentDay--;
-      localStorage.setItem(`rambo_${currentProgram}_day`, currentDay);
-      showDay(currentDay);
-    }
-  };
-}
+document.getElementById("prevBtn").onclick = () => {
+  if (!isLoggedIn) return;
+  if (currentDay > 1) showDay(--currentDay);
+};
 
-if (nextBtn) {
-  nextBtn.onclick = () => {
-    if (currentDay < totalDays) {
-      currentDay++;
-      localStorage.setItem(`rambo_${currentProgram}_day`, currentDay);
-      showDay(currentDay);
-    }
-  };
-}
+document.getElementById("nextBtn").onclick = () => {
+  if (!isLoggedIn) return;
+  if (currentDay < currentWorkouts.length) showDay(++currentDay);
+};
+
+// =========================
+// RESET
+// =========================
+document.getElementById("resetProgress").onclick = () => {
+  if (!confirm("Reset progress?")) return;
+
+  Object.keys(localStorage).forEach(k => {
+    if (k.includes("-e")) localStorage.removeItem(k);
+  });
+
+  showDay(currentDay);
+};
 
 // =========================
 // CLOUD SAVE
 // =========================
-function saveToCloud(key, value) {
+function saveCloud(key, value) {
   if (!currentUser) return;
 
-  db.collection("users")
-    .doc(currentUser.uid)
-    .set(
-      { progress: { [getKey(key)]: value } },
-      { merge: true }
-    );
+  db.collection("users").doc(currentUser.uid).set({
+    [key]: value
+  }, { merge: true });
 }
 
-// =========================
-// CLOUD LOAD
-// =========================
-function loadCloudData() {
+function loadCloud() {
   if (!currentUser) return;
 
-  db.collection("users")
-    .doc(currentUser.uid)
-    .get()
+  db.collection("users").doc(currentUser.uid).get()
     .then(doc => {
-      if (!doc.exists) return;
+      if (doc.exists) {
+        const data = doc.data();
 
-      const data = doc.data().progress || {};
+        Object.keys(data).forEach(k => {
+          localStorage.setItem(k, data[k]);
+        });
 
-      Object.keys(data).forEach(k => {
-        localStorage.setItem(k, data[k]);
-      });
-
-      showDay(currentDay);
+        showDay(currentDay);
+      }
     });
 }
 
 // =========================
-// INIT SAFETY
+// INIT
 // =========================
 refreshProgram();
-showLoggedOutUI();
