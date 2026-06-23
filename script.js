@@ -22,9 +22,7 @@ let currentUser = null;
 let isLoggedIn = false;
 
 let currentProgram = localStorage.getItem("currentProgram") || "5day";
-
 let currentWorkouts = currentProgram === "4day" ? workouts4Day : workouts;
-
 let currentDay = 1;
 
 // =========================
@@ -32,6 +30,23 @@ let currentDay = 1;
 // =========================
 const workoutContainer = document.getElementById("workoutContainer");
 const authMessage = document.getElementById("authMessage");
+const loginModal = document.getElementById("loginModal");
+
+// =========================
+// MODAL HELPERS
+// =========================
+function showLoginModal() {
+  loginModal.style.display = "flex";
+}
+
+function hideLoginModal() {
+  loginModal.style.display = "none";
+}
+
+// Show modal immediately on load (prevents blank UI)
+window.addEventListener("load", () => {
+  showLoginModal();
+});
 
 // =========================
 // AUTH STATE
@@ -41,61 +56,62 @@ auth.onAuthStateChanged(user => {
 
   if (user) {
     isLoggedIn = true;
-    document.getElementById("loginModal").style.display = "none";
+
+    hideLoginModal();
+
     loadCloud();
     showDay(currentDay);
+
   } else {
     isLoggedIn = false;
+
+    showLoginModal();
+
     workoutContainer.innerHTML =
       `<div class="day-card"><h3>🔒 Login to view workouts</h3></div>`;
+
     authMessage.innerText = "Please log in to continue";
   }
 });
 
 // =========================
-// LOGIN / LOGOUT
+// LOGIN
 // =========================
 function login() {
-
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
 
   auth.signInWithEmailAndPassword(email, password)
     .catch(error => {
-
-      document.getElementById("loginStatus").innerText =
-        error.message;
-
+      document.getElementById("loginStatus").innerText = error.message;
     });
-
 }
 
+// =========================
+// LOGOUT
+// =========================
 function logout() {
   auth.signOut();
+  showLoginModal();
 }
+
 // =========================
 // REGISTER
 // =========================
 function register() {
-
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
 
   auth.createUserWithEmailAndPassword(email, password)
-    .then((userCredential) => {
-
+    .then(() => {
       document.getElementById("loginStatus").innerText =
         "Account created successfully!";
-
     })
     .catch(error => {
-
-      document.getElementById("loginStatus").innerText =
-        error.message;
-
+      document.getElementById("loginStatus").innerText = error.message;
     });
-
 }
+
 // =========================
 // PROGRAM
 // =========================
@@ -148,9 +164,8 @@ function showDay(day) {
 
   workoutContainer.innerHTML = html;
 
-  document.querySelectorAll("input[type='checkbox']").forEach(box => {
-    box.addEventListener("change", updateProgress);
-  });
+  document.querySelectorAll("input[type='checkbox']")
+    .forEach(box => box.addEventListener("change", updateProgress));
 
   updateProgress();
 }
