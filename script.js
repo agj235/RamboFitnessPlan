@@ -59,8 +59,19 @@ function login() {
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
 
+  if (!email || !password) {
+    document.getElementById("loginStatus").innerText =
+      "Please enter email and password";
+    return;
+  }
+
   auth.signInWithEmailAndPassword(email, password)
-    .catch(err => alert(err.message));
+    .then(() => {
+      document.getElementById("loginStatus").innerText = "Logged in!";
+    })
+    .catch(err => {
+      document.getElementById("loginStatus").innerText = err.message;
+    });
 }
 
 function logout() {
