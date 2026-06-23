@@ -1,10 +1,11 @@
-const CACHE_NAME = "rambo-fitness-cache-v1";
+const CACHE_NAME = "rambo-fitness-cache-v2";
 const urlsToCache = [
   "/",
   "/index.html",
   "/styles.css",
   "/script.js",
   "/workouts.js",
+  "/workouts4day.js",
   "/manifest.json"
 ];
 

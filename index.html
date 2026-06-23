@@ -4,26 +4,47 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Rambo Fitness Plan</title>
+
 <link rel="stylesheet" href="styles.css">
 <link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="fitnessLogo2.png">
-<link rel="icon" type="image/png" href="fitnessLogo2.png">
-<link rel="apple-touch-icon" sizes="180x180" href="fitnessLogo2.png">
+
 <meta name="theme-color" content="#ff0000">
 </head>
 
 <body>
+<!-- =========================
+LOGIN MODAL
+========================= -->
+<div id="loginModal" class="login-modal">
+  <div class="login-box">
+    <h2>🐺 Rambo Fitness Login</h2>
+
+    <input type="email" id="email" placeholder="Email" />
+    <input type="password" id="password" placeholder="Password" />
+
+    <button onclick="login()">Login</button>
+    <button onclick="logout()" class="logout-btn">Logout</button>
+
+    <p id="loginStatus"></p>
+  </div>
+</div>
 
 <header>
   <h1>RAMBO FITNESS PLAN</h1>
   <p>7-week Muscle Endurance Program</p>
+
+  <button onclick="login()">Login</button>
+  <button onclick="logout()">Logout</button>
 </header>
 
 <section class="hero">
   <h2>Train Hard. Build Endurance. Track Your Progress.</h2>
-  <p>Follow the full 7-week program and transform your fitness.</p>
+  <p>Follow the full program and transform your fitness.</p>
+
   <button onclick="scrollToWorkouts()">Start Training</button>
 </section>
+
+<div id="authMessage" style="text-align:center; margin:15px; color:#d4af37;"></div>
 
 <div class="progress-container">
   <div id="progressBar"></div>
@@ -32,17 +53,24 @@
 <section id="workouts" class="workouts">
   <h2>Workout Plan</h2>
 
+  <div class="program-selector">
+    <label>Choose Program:</label>
+    <select id="programSelect">
+      <option value="5day">5-Day Rambo Program</option>
+      <option value="4day">4-Day Rambo Program</option>
+    </select>
+  </div>
+
   <div class="navigation-buttons">
     <button id="prevBtn">⬅ Previous Day</button>
     <button id="nextBtn">Next Day ➡</button>
-    <button id="resetProgress" title="Click to reset all progress and start fresh">Reset Progress</button>
+    <button id="resetProgress">Reset Progress</button>
   </div>
 
   <div id="workoutContainer"></div>
 </section>
 
 <div id="dashboard" class="dashboard">
-
   <h2>📊 Fitness Dashboard</h2>
 
   <div class="ring-wrap">
@@ -50,6 +78,7 @@
       <circle class="bg" cx="70" cy="70" r="60"></circle>
       <circle class="progress" cx="70" cy="70" r="60"></circle>
     </svg>
+
     <div class="ring-text">
       <span id="dashPercent">0%</span>
       <small>Progress</small>
@@ -59,32 +88,19 @@
   <div class="dash-stats">
     <div>📅 Day: <span id="dashDay"></span></div>
     <div>🏋️ Completed: <span id="dashCompleted"></span></div>
-    <div>🔥 Streak: <span id="dashStreak">0</span> days</div>
+    <div>🔥 Streak: <span id="dashStreak">0</span></div>
   </div>
 
   <div id="dashWeeks" class="week-grid"></div>
-
 </div>
 
-<svg width="0" height="0">
-  <defs>
-    <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#f7e7a1" />
-      <stop offset="50%" stop-color="#d4af37" />
-      <stop offset="100%" stop-color="#b8860b" />
-    </linearGradient>
-  </defs>
-</svg>
-
-<footer>
-  <p>Created by Angel Jimenez</p>
-  <p style="font-size:0.85rem; color: #aaa; margin-top: 10px;">
-    ⚠️ Disclaimer: I am not a certified fitness professional. These workouts are based on my personal routine. Please consult a doctor before starting any new exercise program.
-  </p>
-</footer>
-
 <script src="workouts.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+<script src="workouts4day.js"></script>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"></script>
+
 <script src="script.js"></script>
 
 </body>
