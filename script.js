@@ -339,3 +339,40 @@ window.login = login;
 window.logout = logout;
 window.register = register;
 window.scrollToWorkouts = scrollToWorkouts;
+
+document.getElementById("resetProgress").addEventListener("click", resetProgress);
+
+function resetProgress() {
+  if (!currentUser) return;
+
+  // 1. Clear localStorage checkboxes
+  document.querySelectorAll("input[type='checkbox']").forEach(box => {
+    localStorage.removeItem(box.id);
+    box.checked = false;
+  });
+
+  // 2. Reset Firestore progress
+  db.collection("users")
+    .doc(currentUser.uid)
+    .set({
+      progress: {},
+      currentDay: 1
+    }, { merge: true });
+
+  // 3. Reset state
+  currentDay = 1;
+
+  // 4. Reset UI
+  const bar = document.getElementById("progressBar");
+  const percentEl = document.getElementById("dashPercent");
+  const completedEl = document.getElementById("dashCompleted");
+  const dayEl = document.getElementById("dashDay");
+
+  if (bar) bar.style.width = "0%";
+  if (percentEl) percentEl.innerText = "0%";
+  if (completedEl) completedEl.innerText = "0/0";
+  if (dayEl) dayEl.innerText = "1";
+
+  // 5. Reload workout day UI
+  showDay(currentDay);
+}
