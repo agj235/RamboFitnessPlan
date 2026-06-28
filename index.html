@@ -3,11 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Rambo Fitness Plan</title>
 
 <link rel="stylesheet" href="styles.css">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#ff0000">
+<link rel="icon" href="fitnessLogo2.png">
 </head>
 
 <body>
@@ -17,12 +19,13 @@
   <div class="login-box">
     <h2>🐺 Rambo Fitness Login</h2>
 
-    <input type="email" id="email" placeholder="Email">
-    <input type="password" id="password" placeholder="Password">
+    <input type="email" id="email" placeholder="Email" autocomplete="email">
+    <input type="password" id="password" placeholder="Password" autocomplete="current-password">
 
     <button onclick="login()">Login</button>
     <button onclick="register()">Create Account</button>
-    <button onclick="logout()" class="logout-btn">Logout</button>
+
+
 
     <p id="loginStatus"></p>
   </div>
@@ -31,6 +34,11 @@
 <header>
   <h1>RAMBO FITNESS PLAN</h1>
   <p>7-week Muscle Endurance Program</p>
+
+ <div id="userControls">
+  <button class="app-btn" onclick="openAbout()">About</button>
+  <button class="app-btn" onclick="logout()">Logout</button>
+</div>
 </header>
 
 <section class="hero">
@@ -42,6 +50,7 @@
 
 <div id="authMessage" style="text-align:center;color:#d4af37;"></div>
 
+<!-- PROGRESS BAR -->
 <div class="progress-container">
   <div id="progressBar"></div>
 </div>
@@ -60,12 +69,15 @@
   <div class="navigation-buttons">
     <button id="prevBtn">⬅ Previous Day</button>
     <button id="nextBtn">Next Day ➡</button>
+
+    <!-- FIX: this button was missing JS -->
     <button id="resetProgress">Reset</button>
   </div>
 
   <div id="workoutContainer"></div>
 </section>
 
+<!-- DASHBOARD -->
 <div class="dashboard">
   <h2>📊 Dashboard</h2>
 
@@ -81,8 +93,8 @@
   </div>
 
   <div class="dash-stats">
-    <div>Day: <span id="dashDay"></span></div>
-    <div>Completed: <span id="dashCompleted"></span></div>
+    <div>Day: <span id="dashDay">1</span></div>
+    <div>Completed: <span id="dashCompleted">0/0</span></div>
   </div>
 </div>
 
@@ -91,9 +103,43 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 
-<script src="workouts.js"></script>
-<script src="workouts4day.js"></script>
-<script src="script.js"></script>
+<!-- YOUR DATA FILES -->
+<!-- <script src="workouts5day.js"></script>
+<script src="workouts4day.js"></script> -->
 
+<!-- MAIN SCRIPT -->
+<script src="script.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+<!-- ABOUT MODAL -->
+<div id="aboutModal" class="about-modal">
+  <div class="about-box">
+
+    <h2>🐺 About Rambo Fitness</h2>
+
+    <p>
+      The Rambo Fitness Plan is built to push your endurance, strength, and discipline.
+      It is designed for consistent training over 7 weeks to build real physical and mental toughness.
+    </p>
+
+    <h3>💪 Who This Is For</h3>
+    <ul>
+      <li>People serious about fitness</li>
+      <li>Jiu Jitsu athletes & grapplers</li>
+      <li>Beginners to advanced lifters</li>
+    </ul>
+
+    <h3>🔥 Training Philosophy</h3>
+    <p>
+      High-volume resistance training + cardio conditioning + discipline.
+      Rest days are built in for recovery and long-term growth.
+    </p>
+
+    <h3>👊 Creator</h3>
+    <p>Built by Angel Jimenez — Software Engineering student & Jiu Jitsu practitioner.</p>
+
+    <button onclick="closeAbout()">Close</button>
+
+  </div>
+</div>
 </body>
 </html>

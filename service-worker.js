@@ -4,7 +4,7 @@ const urlsToCache = [
   "/index.html",
   "/styles.css",
   "/script.js",
-  "/workouts.js",
+  "/workouts5day.js",
   "/workouts4day.js",
   "/manifest.json"
 ];

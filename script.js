@@ -19,8 +19,6 @@ const db = firebase.firestore();
 // STATE
 // =========================
 let currentUser = null;
-let isLoggedIn = false;
-
 let currentProgram = localStorage.getItem("currentProgram") || "5day";
 let currentWorkouts = [];
 let currentDay = 1;
@@ -34,12 +32,12 @@ const loginModal = document.getElementById("loginModal");
 const loadingScreen = document.getElementById("loadingScreen");
 
 // =========================
-// INIT UI
+// INIT WORKFLOW (FIX FOR WORKOUT LOADING)
 // =========================
-window.addEventListener("load", () => {
-  if (loadingScreen) loadingScreen.style.display = "flex";
-  if (loginModal) loginModal.style.display = "none";
-});
+function initApp() {
+  refreshProgram();
+  showDay(currentDay);
+}
 
 // =========================
 // AUTH STATE
@@ -49,51 +47,64 @@ auth.onAuthStateChanged(user => {
 
   if (loadingScreen) loadingScreen.style.display = "none";
 
-  if (user) {
-    isLoggedIn = true;
+  const userControls = document.getElementById("userControls");
 
+  if (user) {
     if (loginModal) loginModal.style.display = "none";
+    if (userControls) userControls.style.display = "block";
 
     refreshProgram();
-    loadCloud();
+    loadCloudData();
     showDay(currentDay);
 
   } else {
-    isLoggedIn = false;
-
     if (loginModal) loginModal.style.display = "flex";
+    if (userControls) userControls.style.display = "none";
+
+    resetUI();
 
     workoutContainer.innerHTML =
       `<div class="day-card"><h3>🔒 Login to view workouts</h3></div>`;
-
-    authMessage.innerText = "Please log in to continue";
   }
 });
 
 // =========================
-// SAFETY LOAD WORKOUTS
+// WORKOUT LOADING (FIXED)
 // =========================
-function refreshProgram() {
-  const w = window.workouts;
-  const w4 = window.workouts4Day;
+async function refreshProgram() {
+  try {
+    const res5 = await fetch("workouts5day.json");
+    const res4 = await fetch("workouts4day.json");
 
-  if (currentProgram === "4day" && Array.isArray(w4)) {
-    currentWorkouts = w4;
-  } else if (Array.isArray(w)) {
-    currentWorkouts = w;
-  } else {
-    console.error("Workout files not loaded correctly");
+    const data5 = await res5.json();
+    const data4 = await res4.json();
+
+    if (currentProgram === "4day") {
+      currentWorkouts = data4;
+    } else {
+      currentWorkouts = data5;
+    }
+
+    console.log("Workouts loaded:", currentWorkouts.length);
+
+  } catch (err) {
+    console.error("Failed to load workouts:", err);
     currentWorkouts = [];
   }
 }
+async function initApp() {
+  await refreshProgram();
+  showDay(currentDay);
+}
 
 // =========================
-// SHOW DAY (SAFE VERSION)
+// SHOW DAY (SAFE)
 // =========================
 function showDay(day) {
-  if (!isLoggedIn) return;
+  if (!currentUser) return;
+  if (!currentWorkouts || currentWorkouts.length === 0) return;
 
-  const w = currentWorkouts?.[day - 1];
+  const w = currentWorkouts[day - 1];
 
   if (!w) {
     workoutContainer.innerHTML =
@@ -126,6 +137,15 @@ function showDay(day) {
   updateProgress();
 }
 
+// Confetti launcher
+function launchConfetti() {
+  confetti({
+    particleCount: 120,
+    spread: 70,
+    origin: { y: 0.6 }
+  });
+}
+
 // =========================
 // PROGRESS
 // =========================
@@ -133,18 +153,53 @@ function updateProgress() {
   const boxes = document.querySelectorAll("input[type='checkbox']");
   let completed = 0;
 
+  const progress = {};
+
   boxes.forEach(b => {
     localStorage.setItem(b.id, b.checked);
+    progress[b.id] = b.checked;
+
     if (b.checked) completed++;
   });
+
+  if (currentUser) {
+    db.collection("users")
+      .doc(currentUser.uid)
+      .set({
+        progress,
+        currentDay
+      }, { merge: true });
+  }
 
   const total = boxes.length;
   const percent = total ? Math.round((completed / total) * 100) : 0;
 
-  document.getElementById("progressBar").style.width = percent + "%";
-  document.getElementById("dashPercent").innerText = percent + "%";
-  document.getElementById("dashCompleted").innerText =
-    `${completed}/${total}`;
+  const bar = document.getElementById("progressBar");
+  const percentEl = document.getElementById("dashPercent");
+  const completedEl = document.getElementById("dashCompleted");
+  const dayEl = document.getElementById("dashDay");
+
+  if (bar) bar.style.width = percent + "%";
+  if (percentEl) percentEl.innerText = percent + "%";
+  if (completedEl) completedEl.innerText = `${completed}/${total}`;
+  if (dayEl) dayEl.innerText = currentDay;
+
+  const key = `confetti-day-${currentDay}`;
+const alreadyPlayed = localStorage.getItem(key);
+
+if (percent === 100 && !alreadyPlayed) {
+  launchConfetti();
+  localStorage.setItem(key, "true");
+}
+}
+
+// ABOUT MODAL
+function openAbout() {
+  document.getElementById("aboutModal").style.display = "flex";
+}
+
+function closeAbout() {
+  document.getElementById("aboutModal").style.display = "none";
 }
 
 // =========================
@@ -178,13 +233,109 @@ function register() {
 }
 
 // =========================
-// LOGOUT
+// CLOUD DATA
 // =========================
-function logout() {
-  auth.signOut();
+function loadCloudData() {
+  if (!currentUser) return;
+
+  db.collection("users")
+    .doc(currentUser.uid)
+    .get()
+    .then(doc => {
+      if (!doc.exists) return;
+
+      const data = doc.data();
+
+      if (data.progress) {
+        Object.keys(data.progress).forEach(key => {
+          localStorage.setItem(key, data.progress[key]);
+        });
+      }
+
+      if (data.currentDay) {
+        currentDay = data.currentDay;
+      }
+
+      showDay(currentDay);
+    })
+    .catch(console.error);
 }
 
 // =========================
-// INIT
+// NAVIGATION
 // =========================
-refreshProgram();
+document.getElementById("prevBtn").onclick = () => {
+  if (currentDay > 1) {
+    currentDay--;
+    showDay(currentDay);
+  }
+};
+
+document.getElementById("nextBtn").onclick = () => {
+  if (currentDay < currentWorkouts.length) {
+    currentDay++;
+    showDay(currentDay);
+  }
+};
+
+// =========================
+// PROGRAM SELECTOR
+// =========================
+document.getElementById("programSelect").addEventListener("change", e => {
+  currentProgram = e.target.value;
+  localStorage.setItem("currentProgram", currentProgram);
+
+  refreshProgram();
+  currentDay = 1;
+  showDay(currentDay);
+});
+
+// =========================
+// RESET UI
+// =========================
+function resetUI() {
+  const bar = document.getElementById("progressBar");
+  const percentEl = document.getElementById("dashPercent");
+  const completedEl = document.getElementById("dashCompleted");
+
+  if (bar) bar.style.width = "0%";
+  if (percentEl) percentEl.innerText = "0%";
+  if (completedEl) completedEl.innerText = "0/0";
+}
+
+// =========================
+// SCROLL
+// =========================
+function scrollToWorkouts() {
+  document.getElementById("workouts").scrollIntoView({
+    behavior: "smooth"
+  });
+}
+
+// =========================
+// LOGOUT
+// =========================
+function logout() {
+  auth.signOut().then(() => {
+    currentUser = null;
+    resetUI();
+
+    workoutContainer.innerHTML =
+      `<div class="day-card"><h3>🔒 Logged out</h3></div>`;
+  });
+}
+
+// =========================
+// INIT AFTER PAGE LOAD (IMPORTANT FIX)
+// =========================
+window.addEventListener("load", async () => {
+  await initApp();
+});
+
+// =========================
+// GLOBAL EXPORTS
+// =========================
+window.login = login;
+window.logout = logout;
+window.register = register;
+window.scrollToWorkouts = scrollToWorkouts;
