@@ -376,3 +376,11 @@ function resetProgress() {
   // 5. Reload workout day UI
   showDay(currentDay);
 }
+
+window.addEventListener("load", () => {
+  const splash = document.getElementById("splashScreen");
+
+  setTimeout(() => {
+    if (splash) splash.style.display = "none";
+  }, 3000);
+});
