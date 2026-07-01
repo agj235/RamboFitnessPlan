@@ -384,3 +384,18 @@ window.addEventListener("load", () => {
     if (splash) splash.style.display = "none";
   }, 3000);
 });
+
+window.addEventListener("load", () => {
+  const splash = document.getElementById("splash");
+
+  // keeps splash visible for cinematic timing
+  setTimeout(() => {
+    splash.style.opacity = "0";
+    splash.style.transition = "0.8s ease";
+
+    setTimeout(() => {
+      splash.style.display = "none";
+    }, 800);
+
+  }, 2800); // total intro time
+});

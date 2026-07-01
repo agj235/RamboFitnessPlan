@@ -14,6 +14,20 @@
 
 <body>
 <!-- SPLASH SCREEN -->
+
+<div class="splash-screen" id="splash">
+  <div class="splash-content">
+
+    <img src="/fitnessLogo2.png" alt="logo" />
+
+    <h1 class="splash-title">RAMBO FITNESS PLAN</h1>
+
+    <p class="splash-sub">7-Week Warrior Program</p>
+
+    <div class="splash-line"></div>
+
+  </div>
+</div>
 <!-- SPLASH SCREEN -->
 <div id="splashScreen" class="splash-screen">
   <div class="splash-content">
@@ -43,10 +57,8 @@
 </div>
 
 <header class="app-header">
-
   <div class="brand">
-    <img src="fitnessLogo2.png" alt="Rambo Fitness Logo" class="header-logo">
-
+    <img class="header-logo" src="fitnessLogo2.png" />
     <div class="brand-text">
       <h1>RAMBO FITNESS PLAN</h1>
       <p>7-week Muscle Endurance Program</p>
@@ -55,9 +67,8 @@
 
   <div id="userControls">
     <button class="app-btn" onclick="openAbout()">About</button>
-    <button class="app-btn" onclick="logout()">Logout</button>
+    <button class="app-btn logout-btn" onclick="logout()">Logout</button>
   </div>
-
 </header>
 
 <section class="hero">
@@ -67,12 +78,28 @@
   <button onclick="scrollToWorkouts()">Start Training</button>
 </section>
 
+  <!-- DASHBOARD -->
+<div class="dashboard">
+  <h2>📊 Dashboard</h2>
+
+  <div class="ring-wrap">
+    <svg width="140" height="140">
+      <circle class="bg" cx="70" cy="70" r="60"></circle>
+      <circle class="progress" cx="70" cy="70" r="60"></circle>
+    </svg>
+
+    <div class="ring-text">
+      <span id="dashPercent">0%</span>
+    </div>
+  </div>
+
+  <div class="dash-stats">
+    <div>Day: <span id="dashDay">1</span></div>
+    <div>Completed: <span id="dashCompleted">0/0</span></div>
+  </div>
+</div>
 <div id="authMessage" style="text-align:center;color:#d4af37;"></div>
 
-<!-- PROGRESS BAR -->
-<div class="progress-container">
-  <div id="progressBar"></div>
-</div>
 
 <section id="workouts" class="workouts">
   <h2>Workout Plan</h2>
@@ -93,29 +120,17 @@
     <button id="resetProgress">Reset</button>
   </div>
 
+
+
+
   <div id="workoutContainer"></div>
+  <!-- PROGRESS BAR -->
+<div class="progress-container">
+  <div id="progressBar"></div>
+</div>
 </section>
 
-<!-- DASHBOARD -->
-<div class="dashboard">
-  <h2>📊 Dashboard</h2>
 
-  <div class="ring-wrap">
-    <svg width="140" height="140">
-      <circle class="bg" cx="70" cy="70" r="60"></circle>
-      <circle class="progress" cx="70" cy="70" r="60"></circle>
-    </svg>
-
-    <div class="ring-text">
-      <span id="dashPercent">0%</span>
-    </div>
-  </div>
-
-  <div class="dash-stats">
-    <div>Day: <span id="dashDay">1</span></div>
-    <div>Completed: <span id="dashCompleted">0/0</span></div>
-  </div>
-</div>
 
 <!-- Firebase COMPAT ONLY -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
