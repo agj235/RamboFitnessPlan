@@ -1429,3 +1429,58 @@ circle.progress {
     flex-direction: column;
   }
 }
+
+@media (max-width: 768px) {
+
+  /* overall spacing boost */
+  body {
+    font-size: 16px;
+  }
+
+  /* strength layout becomes stacked */
+  .strength-container {
+    flex-direction: column;
+    padding: 15px;
+    gap: 15px;
+  }
+
+  /* panels become bigger cards */
+  .strength-panel {
+    padding: 18px;
+    border-radius: 16px;
+  }
+
+  /* inputs become touch-friendly */
+  .strength-panel input {
+    padding: 14px;
+    font-size: 16px;
+    margin: 10px 0;
+  }
+
+  /* buttons bigger (important for iPhone UX) */
+  .strength-panel button,
+  .app-btn {
+    padding: 14px;
+    font-size: 16px;
+    width: 100%;
+    margin-top: 10px;
+  }
+
+  /* headings scale up */
+  .strength-panel h2,
+  .strength-panel h3 {
+    font-size: 20px;
+  }
+
+  /* protocol text readability */
+  .protocol-box p {
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  /* rm rows (chart stats) bigger */
+  .rm-row {
+    padding: 14px;
+    font-size: 14px;
+  }
+}
