@@ -1366,7 +1366,6 @@ circle.progress {
   50% { transform: scale(1.01); box-shadow: 0 0 25px rgba(212,175,55,0.2); }
   100% { transform: scale(1); }
 }
-
 .strength-guide {
   background: #111;
   border: 1px solid rgba(212,175,55,0.2);
@@ -1392,17 +1391,23 @@ circle.progress {
   font-size: 13px;
 }
 
+/* MAIN LAYOUT */
 .strength-container {
-  display: flex;
-  gap: 20px;
   max-width: 1000px;
   margin: 40px auto;
   padding: 20px;
 }
 
-/* each side */
+/* GRID SYSTEM (desktop split view) */
+.strength-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+/* PANELS */
 .strength-panel {
-  flex: 1;
   background: #111;
   border: 1px solid rgba(212,175,55,0.2);
   border-radius: 14px;
@@ -1420,67 +1425,46 @@ circle.progress {
   color: white;
 }
 
-/* mobile fallback */
-@media (max-width: 768px) {
-  .strength-container {
-    flex-direction: column;
-  }
-}
-
+/* MOBILE */
 @media (max-width: 768px) {
 
-  /* overall spacing boost */
   body {
     font-size: 16px;
   }
 
-  /* strength layout becomes stacked */
-  .strength-container {
-    flex-direction: column;
-    padding: 15px;
-    gap: 15px;
+  .strength-grid {
+    grid-template-columns: 1fr;
   }
 
-  /* panels become bigger cards */
+  .strength-container {
+    padding: 15px;
+  }
+
   .strength-panel {
     padding: 18px;
     border-radius: 16px;
   }
 
-  /* inputs become touch-friendly */
   .strength-panel input {
     padding: 14px;
     font-size: 16px;
-    margin: 10px 0;
   }
 
-  /* buttons bigger (important for iPhone UX) */
   .strength-panel button,
   .app-btn {
+    width: 100%;
     padding: 14px;
     font-size: 16px;
-    width: 100%;
     margin-top: 10px;
   }
 
-  /* headings scale up */
-  .strength-panel h2,
-  .strength-panel h3 {
-    font-size: 20px;
-  }
-
-  /* protocol text readability */
-  .protocol-box p {
-    font-size: 14px;
-    line-height: 1.5;
-  }
-
-  /* rm rows (chart stats) bigger */
   .rm-row {
     padding: 14px;
     font-size: 14px;
   }
 }
+
+/* HEADER MOBILE FIX (keep ONE version only) */
 @media (max-width: 600px) {
 
   .app-header {
@@ -1491,7 +1475,6 @@ circle.progress {
     padding-top: 20px;
   }
 
-  /* STOP absolute positioning on mobile */
   #userControls {
     position: static;
     width: 100%;
@@ -1515,30 +1498,5 @@ circle.progress {
   .app-btn {
     font-size: 12px;
     padding: 8px 10px;
-  }
-}
-.strength-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-  margin-top: 20px;
-}
-
-.strength-panel {
-  background: #111;
-  border: 1px solid rgba(212,175,55,0.2);
-  padding: 20px;
-  border-radius: 14px;
-}
-
-.strength-panel h3 {
-  color: #d4af37;
-  margin-bottom: 10px;
-}
-
-/* mobile stack */
-@media (max-width: 768px) {
-  .strength-grid {
-    grid-template-columns: 1fr;
   }
 }
