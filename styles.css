@@ -890,13 +890,6 @@ circle {
   color: #ddd;
 }
 
-.rm-row {
-  display: flex;
-  justify-content: space-between;
-  padding: 6px 0;
-  border-bottom: 1px solid #222;
-}
-
 /* =========================
    SECTION HEADERS INSIDE MODAL
 ========================= */
@@ -952,21 +945,6 @@ canvas {
    STRENGTH DASHBOARD PAGE
    ========================= */
 
-/* Page background consistency */
-body {
-  background: #0b0b0b;
-  color: #fff;
-  font-family: Arial, sans-serif;
-}
-
-/* Main container */
-.strength-container {
-  width: 100%;
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 20px;
-}
-
 /* MOBILE OVERRIDE = FULL SCREEN APP FEEL */
 @media (max-width: 768px) {
 
@@ -1004,17 +982,6 @@ body {
 .strength-container h3 {
   color: #d4af37;
   margin-bottom: 10px;
-}
-
-/* Strength stat rows */
-.rm-row {
-  display: flex;
-  justify-content: space-between;
-  padding: 12px 15px;
-  margin: 8px 0;
-  background: #1a1a1a;
-  border-radius: 10px;
-  border: 1px solid #2a2a2a;
 }
 
 /* Inputs (bench/squat/deadlift/1RM) */
