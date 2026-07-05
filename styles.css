@@ -1385,10 +1385,21 @@ circle.progress {
   margin-bottom: 10px;
 }
 
+.protocol-box {
+  background: #0f0f0f;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(212,175,55,0.15);
+}
+
 .protocol-box p {
   margin: 6px 0;
-  color: #ddd;
   font-size: 13px;
+  color: #ddd;
+}
+
+.protocol-box strong {
+  color: #d4af37;
 }
 
 /* MAIN LAYOUT */
