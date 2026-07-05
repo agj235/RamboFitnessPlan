@@ -101,40 +101,42 @@ async function initApp() {
 // SHOW DAY (SAFE)
 // =========================
 function showDay(day) {
-  if (!currentUser) return;
-  if (!currentWorkouts || currentWorkouts.length === 0) return;
+  if (!currentUser || !currentWorkouts.length) return;
+  if (!workoutContainer) return; // 🔥 FIX
 
   const w = currentWorkouts[day - 1];
-
-  if (!w) {
-    workoutContainer.innerHTML =
-      `<div class="day-card"><h3>No workout data found</h3></div>`;
-    return;
-  }
+  if (!w) return;
 
   let html = `<div class="day-card">
     <h3>Day ${w.day} - ${w.title}</h3>
     <ul>`;
 
   w.exercises.forEach((ex, i) => {
-    const id = `d${w.day}-e${i}`;
-    const checked = localStorage.getItem(id) === "true";
+  const id = `d${w.day}-e${i}`;
+  const checked = localStorage.getItem(id) === "true";
 
-    html += `
-      <li>
+  html += `
+    <div class="exercise-card ${checked ? "done" : ""}">
+      <div class="check-wrap">
         <input type="checkbox" id="${id}" ${checked ? "checked" : ""}>
-        <label for="${id}">${ex}</label>
-      </li>`;
-  });
+      </div>
+
+      <label for="${id}" class="exercise-text">
+        ${ex}
+      </label>
+
+      <div class="status-dot"></div>
+    </div>
+  `;
+});
 
   html += `</ul></div>`;
 
   workoutContainer.innerHTML = html;
 
-  document.querySelectorAll("input[type='checkbox']")
-    .forEach(box => box.addEventListener("change", updateProgress));
+  workoutContainer.querySelectorAll("input[type='checkbox']")
+    .forEach(box => box.onchange = updateProgress);
 
-  updateProgress();
 }
 
 // Confetti launcher
@@ -189,7 +191,7 @@ const alreadyPlayed = localStorage.getItem(key);
 
 if (percent === 100 && !alreadyPlayed) {
   launchConfetti();
-  localStorage.setItem(key, "true");
+  workoutContainer.classList.add("completed-pulse");
 }
 }
 
@@ -264,32 +266,47 @@ function loadCloudData() {
 // =========================
 // NAVIGATION
 // =========================
-document.getElementById("prevBtn").onclick = () => {
-  if (currentDay > 1) {
-    currentDay--;
-    showDay(currentDay);
-  }
-};
+const prevBtn = document.getElementById("prevBtn");
+if (prevBtn) {
+  prevBtn.onclick = () => {
+    if (currentDay > 1) {
+      currentDay--;
+      showDay(currentDay);
+    }
+  };
+}
 
-document.getElementById("nextBtn").onclick = () => {
-  if (currentDay < currentWorkouts.length) {
-    currentDay++;
-    showDay(currentDay);
-  }
-};
+const nextBtn = document.getElementById("nextBtn");
+if (nextBtn) {
+  nextBtn.onclick = () => {
+    if (!currentWorkouts.length) return;
+
+    if (currentDay < currentWorkouts.length) {
+      currentDay++;
+      showDay(currentDay);
+    }
+  };
+}
+
+const resetBtn = document.getElementById("resetProgress");
+if (resetBtn) {
+  resetBtn.onclick = resetProgress;
+}
 
 // =========================
 // PROGRAM SELECTOR
 // =========================
-document.getElementById("programSelect").addEventListener("change", e => {
-  currentProgram = e.target.value;
-  localStorage.setItem("currentProgram", currentProgram);
+const programSelect = document.getElementById("programSelect");
+if (programSelect) {
+  programSelect.addEventListener("change", async e => {
+    currentProgram = e.target.value;
+    localStorage.setItem("currentProgram", currentProgram);
 
-  refreshProgram();
-  currentDay = 1;
-  showDay(currentDay);
-});
-
+    await refreshProgram();
+    currentDay = 1;
+    showDay(currentDay);
+  });
+}
 // =========================
 // RESET UI
 // =========================
@@ -343,15 +360,24 @@ window.scrollToWorkouts = scrollToWorkouts;
 document.getElementById("resetProgress").addEventListener("click", resetProgress);
 
 function resetProgress() {
+  if (!confirm("Reset all workout progress?")) return;
+
   if (!currentUser) return;
 
-  // 1. Clear localStorage checkboxes
+  // 1. Clear ALL workout-related localStorage
+  Object.keys(localStorage).forEach(key => {
+    if (key.startsWith("d")) {
+      // your exercise IDs look like: d1-e0, d2-e3 etc
+      localStorage.removeItem(key);
+    }
+  });
+
+  // 2. Reset checkboxes in current DOM view
   document.querySelectorAll("input[type='checkbox']").forEach(box => {
-    localStorage.removeItem(box.id);
     box.checked = false;
   });
 
-  // 2. Reset Firestore progress
+  // 3. Reset Firestore progress
   db.collection("users")
     .doc(currentUser.uid)
     .set({
@@ -359,10 +385,13 @@ function resetProgress() {
       currentDay: 1
     }, { merge: true });
 
-  // 3. Reset state
+  // 4. Reset state
   currentDay = 1;
 
-  // 4. Reset UI
+  // 5. Force re-render full UI
+  showDay(currentDay);
+
+  // 6. Reset dashboard UI
   const bar = document.getElementById("progressBar");
   const percentEl = document.getElementById("dashPercent");
   const completedEl = document.getElementById("dashCompleted");
@@ -372,30 +401,283 @@ function resetProgress() {
   if (percentEl) percentEl.innerText = "0%";
   if (completedEl) completedEl.innerText = "0/0";
   if (dayEl) dayEl.innerText = "1";
-
-  // 5. Reload workout day UI
-  showDay(currentDay);
+  
 }
 
-window.addEventListener("load", () => {
-  const splash = document.getElementById("splashScreen");
+// =========================
+// 1RM CALCULATOR
+// =========================
 
-  setTimeout(() => {
-    if (splash) splash.style.display = "none";
-  }, 3000);
-});
+function open1RMModal() {
+  document.getElementById("rmModal").style.display = "flex";
+}
 
-window.addEventListener("load", () => {
-  const splash = document.getElementById("splash");
+function close1RMModal() {
+  document.getElementById("rmModal").style.display = "none";
+}
 
-  // keeps splash visible for cinematic timing
-  setTimeout(() => {
-    splash.style.opacity = "0";
-    splash.style.transition = "0.8s ease";
+function calculate1RM() {
+  const oneRM = Number(document.getElementById("rmInput").value);
+  const results = document.getElementById("rmResults");
 
-    setTimeout(() => {
-      splash.style.display = "none";
-    }, 800);
+  if (!oneRM || oneRM <= 0) {
+    results.innerHTML = "<p>Enter a valid number</p>";
+    return;
+  }
 
-  }, 2800); // total intro time
-});
+  const percents = [50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100];
+
+  results.innerHTML = percents.map(p => {
+    const val = Math.round(oneRM * p / 100);
+    return `
+      <div class="rm-row">
+        <span>${p}%</span>
+        <span>${val} lbs</span>
+      </div>
+    `;
+  }).join("");
+}
+
+// =========================
+// STRENGTH TEST SYSTEM
+// =========================
+
+let testMode = "start";
+
+function openStrengthTest() {
+  document.getElementById("strengthModal").style.display = "flex";
+  loadStrengthTest();
+}
+
+function closeStrengthTest() {
+  document.getElementById("strengthModal").style.display = "none";
+}
+
+function setTestMode(mode) {
+  testMode = mode;
+}
+
+function saveStrengthTest() {
+  if (!currentUser) return;
+
+  const bench = Number(document.getElementById("benchInput").value) || 0;
+  const squat = Number(document.getElementById("squatInput").value) || 0;
+  const deadlift = Number(document.getElementById("deadliftInput").value) || 0;
+
+  const ref = db.collection("users").doc(currentUser.uid);
+
+  ref.get().then(doc => {
+    const data = doc.data() || {};
+    const existing = data.strengthTest || {};
+
+    existing[testMode] = { bench, squat, deadlift };
+
+    ref.set({ strengthTest: existing }, { merge: true });
+
+    localStorage.setItem("strengthTest", JSON.stringify(existing));
+    showStrengthDashboard(existing);
+  });
+}
+
+function loadStrengthTest() {
+  if (!currentUser) return;
+
+  db.collection("users")
+    .doc(currentUser.uid)
+    .get()
+    .then(doc => {
+      const data = doc.data() || {};
+      const test = data.strengthTest;
+
+      if (!test) return;
+
+      if (test.start) {
+        document.getElementById("benchInput").value = test.start.bench || "";
+        document.getElementById("squatInput").value = test.start.squat || "";
+        document.getElementById("deadliftInput").value = test.start.deadlift || "";
+      }
+
+      showStrengthDashboard(test);
+    });
+}
+
+// =========================
+// STRENGTH DASHBOARD
+// =========================
+
+function showStrengthDashboard(data) {
+  const el = document.getElementById("strengthStats");
+  if (!el) return;
+
+  const start = data?.start || {};
+  const end = data?.end || {};
+
+  const diff = (a, b) => (b || 0) - (a || 0);
+
+  const benchGain = diff(start.bench, end.bench);
+  const squatGain = diff(start.squat, end.squat);
+  const deadGain = diff(start.deadlift, end.deadlift);
+
+  const format = (val) => (val >= 0 ? `+${val}` : `${val}`);
+
+  el.innerHTML = `
+    <div class="rm-row"><span>Bench</span><span>${start.bench || 0} → ${end.bench || 0} (${format(benchGain)})</span></div>
+    <div class="rm-row"><span>Squat</span><span>${start.squat || 0} → ${end.squat || 0} (${format(squatGain)})</span></div>
+    <div class="rm-row"><span>Deadlift</span><span>${start.deadlift || 0} → ${end.deadlift || 0} (${format(deadGain)})</span></div>
+  `;
+}
+// =========================
+// STRENGTH HISTORY
+// =========================
+
+function saveStrength() {
+  if (!currentUser) return;
+
+  const bench = Number(document.getElementById("bench").value);
+  const squat = Number(document.getElementById("squat").value);
+  const deadlift = Number(document.getElementById("deadlift").value);
+
+  const entry = {
+    date: new Date().toISOString(),
+    bench: bench || 0,
+    squat: squat || 0,
+    deadlift: deadlift || 0
+  };
+
+  const ref = db.collection("users").doc(currentUser.uid);
+
+  ref.get().then(doc => {
+    const data = doc.data() || {};
+    const history = Array.isArray(data.strengthHistory)
+      ? data.strengthHistory
+      : [];
+
+    history.push(entry);
+
+    return ref.set({ strengthHistory: history }, { merge: true });
+  }).then(() => {
+    console.log("Strength saved:", entry);
+    loadStrengthHistory();
+  }).catch(err => {
+    console.error("Save error:", err);
+  });
+}
+function loadStrengthHistory() {
+  if (!currentUser) return;
+
+  db.collection("users")
+    .doc(currentUser.uid)
+    .get()
+    .then(doc => {
+      const data = doc.data() || {};
+
+      const history = data.strengthHistory;
+
+      console.log("Loaded history:", history);
+
+      if (!Array.isArray(history) || history.length === 0) {
+        console.log("No strength history found");
+        return;
+      }
+
+      renderChart(history);
+      renderLatest(history);
+    })
+    .catch(err => console.error("Load error:", err));
+}
+function renderChart(history) {
+  console.log("Rendering chart with:", history);
+
+  const ctx = document.getElementById("strengthChart");
+
+  if (!ctx) {
+    console.error("Chart canvas missing");
+    return;
+  }
+
+  if (typeof Chart === "undefined") {
+    console.error("Chart.js not loaded");
+    return;
+  }
+
+  const labels = history.map(h =>
+    new Date(h.date).toLocaleDateString()
+  );
+
+  const bench = history.map(h => h.bench);
+  const squat = history.map(h => h.squat);
+  const dead = history.map(h => h.deadlift);
+
+  // 🔥 SAFE DESTROY (fix your crash)
+  if (strengthChart && typeof strengthChart.destroy === "function") {
+    strengthChart.destroy();
+  }
+
+  strengthChart = new Chart(ctx, {
+    type: "line",
+    data: {
+      labels,
+      datasets: [
+        {
+          label: "Bench",
+          data: bench
+        },
+        {
+          label: "Squat",
+          data: squat
+        },
+        {
+          label: "Deadlift",
+          data: dead
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: {
+          labels: { color: "#fff" }
+        }
+      },
+      scales: {
+        x: {
+          ticks: { color: "#aaa" }
+        },
+        y: {
+          ticks: { color: "#aaa" }
+        }
+      }
+    }
+  });
+}
+
+function goStrength() {
+  window.location.href = "strength.html";
+}
+
+window.goStrength = goStrength;
+
+function renderLatest(history) {
+  const latest = history[history.length - 1];
+  const el = document.getElementById("latestStats");
+
+  if (!el || !latest) return;
+
+  el.innerHTML = `
+    <div class="rm-results">
+      <h3>Latest Test</h3>
+
+      <div class="rm-row"><span>Bench</span><span>${latest.bench} lbs</span></div>
+      <div class="rm-row"><span>Squat</span><span>${latest.squat} lbs</span></div>
+      <div class="rm-row"><span>Deadlift</span><span>${latest.deadlift} lbs</span></div>
+    </div>
+  `;
+}
+
+function openStrengthAbout() {
+  document.getElementById("strengthAboutModal").style.display = "flex";
+}
+
+function closeStrengthAbout() {
+  document.getElementById("strengthAboutModal").style.display = "none";
+}

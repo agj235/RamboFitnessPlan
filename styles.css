@@ -42,15 +42,29 @@ body {
 ========================= */
 header {
   text-align: center;
-  padding: 50px 20px;
+  padding: 60px 20px 20px; /* 👈 extra top space fixes overlap */
   background: #111;
   border-bottom: 2px solid var(--primary-gold);
+  position: relative;
 }
 
 header h1 {
   font-size: 3rem;
   color: var(--primary-gold);
   letter-spacing: 2px;
+}
+
+@media (max-width: 600px) {
+  #userControls {
+    top: 8px;
+    right: 8px;
+    gap: 6px;
+  }
+
+  .app-btn {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
 }
 
 .hero {
@@ -127,6 +141,29 @@ header h1 {
 .day-card ul {
   list-style: none;
   padding: 0;
+}
+
+.day-card li {
+  background: #1a1a1a;
+  padding: 14px;
+  margin-bottom: 10px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid #2a2a2a;
+  transition: 0.2s ease;
+}
+
+.day-card li:hover {
+  transform: translateX(3px);
+  border-color: rgba(212,175,55,0.4);
+  background: #1f1f1f;
+}
+
+.day-card label {
+  flex: 1;
+  cursor: pointer;
 }
 
 /* =========================
@@ -465,6 +502,10 @@ circle {
   justify-content: center;
   align-items: center;
   z-index: 9999;
+
+  /* 🔥 IMPORTANT FIX */
+  overflow-y: auto;
+  padding: 20px;
 }
 
 .about-box {
@@ -475,11 +516,25 @@ circle {
   width: 90%;
   border-radius: 12px;
   border: 1px solid #d4af37;
+
+  /* 🔥 KEY FIX */
+  max-height: 85vh;
+  overflow-y: auto;
+  scroll-behavior: smooth;
 }
 
 .about-box h2,
 .about-box h3 {
   color: #d4af37;
+}
+
+.about-box h2 {
+  position: sticky;
+  top: 0;
+  background: #111;
+  padding: 10px 0;
+  margin-top: 0;
+  z-index: 2;
 }
 
 .about-box p,
@@ -515,7 +570,8 @@ circle {
   top: 10px;
   right: 10px;
   display: flex;
-  gap: 10px;
+  gap: 8px;
+  z-index: 10;
 }
 
 /* =========================
@@ -528,6 +584,7 @@ circle {
   padding: 15px 20px;
   background: #000;
   border-bottom: 1px solid #d4af37;
+  flex-wrap: wrap;
 }
 
 .brand {
@@ -711,5 +768,664 @@ circle {
   #programSelect {
     width: 85%;
     font-size: 16px;
+  }
+}
+
+/* =========================
+   MODAL SYSTEM (SHARED STYLE)
+========================= */
+
+.rm-modal,
+#strengthModal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.88);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 99999;
+}
+
+/* =========================
+   MODAL BOX
+========================= */
+
+.rm-box {
+  background: #111;
+  border: 1px solid #d4af37;
+  padding: 25px;
+  border-radius: 14px;
+  width: 340px;
+  max-width: 90%;
+  text-align: center;
+  box-shadow: 0 0 25px rgba(212,175,55,0.2);
+  animation: modalPop 0.25s ease;
+}
+
+@keyframes modalPop {
+  from { transform: scale(0.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.rm-box h2 {
+  color: #d4af37;
+  margin-bottom: 12px;
+  font-size: 18px;
+}
+
+.rm-box p {
+  color: #aaa;
+  font-size: 12px;
+  margin-bottom: 10px;
+}
+
+/* =========================
+   INPUTS
+========================= */
+
+.rm-box input,
+#strengthModal input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 8px;
+  border-radius: 8px;
+  border: none;
+  background: #1a1a1a;
+  color: #fff;
+  text-align: center;
+  outline: none;
+  border: 1px solid rgba(212,175,55,0.2);
+}
+
+.rm-box input:focus,
+#strengthModal input:focus {
+  border-color: #d4af37;
+  box-shadow: 0 0 10px rgba(212,175,55,0.25);
+}
+
+/* =========================
+   BUTTONS
+========================= */
+
+.rm-buttons {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.rm-buttons button {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  border-radius: 8px;
+  transition: 0.2s ease;
+}
+
+.rm-buttons button:first-child {
+  background: #d4af37;
+  color: #111;
+}
+
+.rm-buttons button:first-child:hover {
+  background: #e6c34a;
+  transform: scale(1.03);
+}
+
+.logout-btn {
+  background: #333 !important;
+  color: #fff;
+}
+
+.logout-btn:hover {
+  background: #555 !important;
+}
+
+/* =========================
+   RESULTS LIST
+========================= */
+
+.rm-results {
+  margin-top: 15px;
+  text-align: left;
+  font-size: 13px;
+  color: #ddd;
+}
+
+.rm-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+  border-bottom: 1px solid #222;
+}
+
+/* =========================
+   SECTION HEADERS INSIDE MODAL
+========================= */
+
+.rm-results h3 {
+  color: #d4af37;
+  margin: 10px 0;
+  font-size: 15px;
+}
+
+/* =========================
+   MOBILE FIXES
+========================= */
+
+@media (max-width: 600px) {
+  .rm-box {
+    width: 92%;
+    padding: 20px;
+  }
+
+  .rm-buttons {
+    flex-direction: column;
+  }
+
+  .rm-buttons button {
+    width: 100%;
+  }
+}
+
+.strength-dashboard {
+  background: #111;
+  border: 1px solid rgba(212,175,55,0.2);
+  margin: 20px;
+  padding: 15px;
+  border-radius: 12px;
+  text-align: center;
+}
+
+.strength-dashboard h2 {
+  color: #d4af37;
+  margin-bottom: 10px;
+}
+
+canvas {
+  background: #111;
+  padding: 10px;
+  border-radius: 12px;
+  border: 1px solid rgba(212,175,55,0.2);
+  margin-top: 10px;
+}
+
+/* =========================
+   STRENGTH DASHBOARD PAGE
+   ========================= */
+
+/* Page background consistency */
+body {
+  background: #0b0b0b;
+  color: #fff;
+  font-family: Arial, sans-serif;
+}
+
+/* Main container */
+.strength-container {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 20px;
+}
+
+/* Section titles */
+.strength-container h1,
+.strength-container h2,
+.strength-container h3 {
+  color: #d4af37;
+  margin-bottom: 10px;
+}
+
+/* Strength stat rows */
+.rm-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 15px;
+  margin: 8px 0;
+  background: #1a1a1a;
+  border-radius: 10px;
+  border: 1px solid #2a2a2a;
+}
+
+/* Inputs (bench/squat/deadlift/1RM) */
+.strength-container input[type="number"] {
+  width: 100%;
+  padding: 10px;
+  margin: 6px 0;
+  border-radius: 8px;
+  border: 1px solid #333;
+  background: #1a1a1a;
+  color: white;
+  outline: none;
+}
+
+/* Buttons */
+.strength-container button {
+  background: #d4af37;
+  color: black;
+  border: none;
+  padding: 10px 14px;
+  margin-top: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: 0.2s ease;
+}
+
+.strength-container button:hover {
+  opacity: 0.85;
+  transform: scale(1.02);
+}
+
+/* Chart styling */
+.strength-container canvas {
+  width: 100% !important;
+  max-height: 350px;
+  background: #111;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 600px) {
+  .strength-container {
+    padding: 10px;
+  }
+
+  .rm-row {
+    flex-direction: column;
+    gap: 5px;
+  }
+}
+
+/* ======================================================
+   🔧 FINAL UI PATCH (FIXES DASHBOARD + STRENGTH PAGE)
+====================================================== */
+
+/* =========================
+   APP LAYOUT FIX
+========================= */
+.app-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* =========================
+   FIX HEADER CONFLICTS
+========================= */
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: #000;
+  border-bottom: 1px solid #d4af37;
+}
+
+/* =========================
+   FIX BUTTON CONSISTENCY
+========================= */
+.app-btn {
+  background: #111;
+  color: #d4af37;
+  border: 1px solid #d4af37;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: 0.2s ease;
+}
+
+.app-btn:hover {
+  background: #d4af37;
+  color: #111;
+}
+
+/* =========================
+   FIX DUPLICATE rm-row ISSUE
+   (this fixes chart + strength layout bugs)
+========================= */
+.rm-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  margin: 8px 0;
+  background: #1a1a1a;
+  border-radius: 10px;
+  border: 1px solid #2a2a2a;
+  font-size: 14px;
+}
+
+/* =========================
+   STRENGTH DASHBOARD FIX
+========================= */
+.strength-dashboard,
+.strength-container {
+  max-width: 900px;
+  margin: 30px auto;
+  padding: 20px;
+  background: #111;
+  border-radius: 14px;
+  border: 1px solid rgba(212,175,55,0.2);
+}
+
+/* =========================
+   CHART FIX (CRITICAL)
+========================= */
+canvas {
+  display: block;
+  width: 100% !important;
+  height: 300px !important;
+  background: #111;
+  border-radius: 12px;
+}
+
+/* =========================
+   DASHBOARD FIX SPACING
+========================= */
+.dashboard {
+  margin: 20px auto;
+  max-width: 600px;
+}
+
+/* =========================
+   WORKOUT FIX SPACING
+========================= */
+.workouts {
+  margin-top: 20px;
+}
+
+/* =========================
+   MOBILE CLEANUP
+========================= */
+@media (max-width: 600px) {
+  .app-header {
+    flex-direction: column;
+    gap: 10px;
+    text-align: center;
+  }
+
+  .rm-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+  }
+}
+
+/* ======================================================
+   🔥 UPGRADED DASHBOARD (FIX BLAND LOOK)
+====================================================== */
+
+.dashboard {
+  max-width: 420px;
+  margin: 30px auto;
+  padding: 25px;
+  background: linear-gradient(145deg, #0f0f0f, #141414);
+  border-radius: 18px;
+  border: 1px solid rgba(212,175,55,0.25);
+  box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* subtle gold glow background */
+.dashboard::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at top, rgba(212,175,55,0.12), transparent 60%);
+  pointer-events: none;
+}
+
+/* title */
+.dashboard h2 {
+  color: #d4af37;
+  margin-bottom: 15px;
+  font-size: 20px;
+  letter-spacing: 1px;
+}
+
+/* =========================
+   RING UPGRADE (IMPORTANT)
+========================= */
+.ring-wrap {
+  position: relative;
+  width: 150px;
+  height: 150px;
+  margin: 20px auto;
+  filter: drop-shadow(0 0 12px rgba(212,175,55,0.25));
+}
+
+circle.bg {
+  stroke: #222;
+  stroke-width: 10;
+}
+
+circle.progress {
+  stroke: #d4af37;
+  stroke-width: 10;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.5s ease;
+  filter: drop-shadow(0 0 6px rgba(212,175,55,0.5));
+}
+
+/* center number POP */
+.ring-text span {
+  font-size: 28px;
+  font-weight: bold;
+  color: #d4af37;
+  text-shadow: 0 0 10px rgba(212,175,55,0.3);
+}
+
+/* =========================
+   STATS CARDS (MAKES HUGE DIFFERENCE)
+========================= */
+.dash-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.dash-stats div {
+  background: #1a1a1a;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid #2a2a2a;
+  font-size: 13px;
+  color: #ddd;
+  transition: 0.2s ease;
+}
+
+.dash-stats div:hover {
+  transform: translateY(-2px);
+  border-color: rgba(212,175,55,0.4);
+}
+
+/* highlight numbers */
+#dashDay,
+#dashCompleted,
+#dashPercent {
+  color: #d4af37;
+  font-weight: bold;
+}
+
+/* =========================
+   MAKE IT FEEL MORE "APP"
+========================= */
+.dashboard {
+  animation: fadeInUp 0.6s ease;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* =========================
+   PRO EXERCISE CARDS (NO DATA CHANGES)
+========================= */
+
+.exercise-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  background: linear-gradient(145deg, #161616, #101010);
+  border: 1px solid #222;
+  border-radius: 14px;
+
+  padding: 14px 16px;
+  margin-bottom: 10px;
+
+  transition: all 0.25s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.exercise-card:hover {
+  transform: translateX(4px);
+  border-color: rgba(212,175,55,0.35);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.4);
+}
+
+/* left checkbox */
+.check-wrap {
+  display: flex;
+  align-items: center;
+}
+
+.exercise-card input[type="checkbox"] {
+  transform: scale(1.3);
+  accent-color: #d4af37;
+  cursor: pointer;
+}
+
+/* exercise text */
+.exercise-text {
+  flex: 1;
+  margin-left: 12px;
+  font-size: 14px;
+  color: #f0f0f0;
+  cursor: pointer;
+}
+
+/* completion dot */
+.status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #333;
+  transition: all 0.3s ease;
+}
+
+/* completed state */
+.exercise-card.done {
+  border-color: rgba(212,175,55,0.4);
+  background: linear-gradient(145deg, #1a1a1a, #121212);
+}
+
+.exercise-card.done .exercise-text {
+  text-decoration: line-through;
+  opacity: 0.6;
+  color: #d4af37;
+}
+
+.exercise-card.done .status-dot {
+  background: #d4af37;
+  box-shadow: 0 0 10px rgba(212,175,55,0.6);
+}
+
+/* subtle entrance animation */
+.exercise-card {
+  animation: fadeInUp 0.25s ease;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.completed-pulse {
+  animation: pulseGlow 1s ease;
+}
+
+@keyframes pulseGlow {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.01); box-shadow: 0 0 25px rgba(212,175,55,0.2); }
+  100% { transform: scale(1); }
+}
+
+.strength-guide {
+  background: #111;
+  border: 1px solid rgba(212,175,55,0.2);
+  border-radius: 12px;
+  padding: 15px;
+  margin: 15px 0;
+}
+
+.strength-guide h3 {
+  color: #d4af37;
+  margin-bottom: 8px;
+}
+
+.strength-guide .muted {
+  font-size: 12px;
+  color: #aaa;
+  margin-bottom: 10px;
+}
+
+.protocol-box p {
+  margin: 6px 0;
+  color: #ddd;
+  font-size: 13px;
+}
+
+.strength-container {
+  display: flex;
+  gap: 20px;
+  max-width: 1000px;
+  margin: 40px auto;
+  padding: 20px;
+}
+
+/* each side */
+.strength-panel {
+  flex: 1;
+  background: #111;
+  border: 1px solid rgba(212,175,55,0.2);
+  border-radius: 14px;
+  padding: 20px;
+}
+
+/* inputs */
+.strength-panel input {
+  width: 100%;
+  margin: 8px 0;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #333;
+  background: #1a1a1a;
+  color: white;
+}
+
+/* mobile fallback */
+@media (max-width: 768px) {
+  .strength-container {
+    flex-direction: column;
   }
 }

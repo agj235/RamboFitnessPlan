@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
 <title>Rambo Fitness Plan</title>
 
@@ -30,17 +30,7 @@
 
   </div>
 </div>
-<!-- SPLASH SCREEN -->
-<div id="splashScreen" class="splash-screen">
-  <div class="splash-content">
 
-    <img src="fitnessLogo2.png" alt="Rambo Fitness Logo" class="splash-logo">
-
-    <h1>RAMBO FITNESS</h1>
-    <p>7-Week Warrior Program</p>
-
-  </div>
-</div>
 <!-- LOGIN MODAL -->
 <div id="loginModal" class="login-modal">
   <div class="login-box">
@@ -69,6 +59,7 @@
 
   <div id="userControls">
     <button class="app-btn" onclick="openAbout()">About</button>
+    <button class="app-btn" onclick="goStrength()">Strength Dashboard</button>
     <button class="app-btn logout-btn" onclick="logout()">Logout</button>
   </div>
 </header>
@@ -82,7 +73,7 @@
 
   <!-- DASHBOARD -->
 <div class="dashboard">
-  <h2>📊 Dashboard</h2>
+  <h2>🔥 Daily Progress</h2>
 
   <div class="ring-wrap">
     <svg width="140" height="140">
@@ -99,8 +90,8 @@
     <div>Day: <span id="dashDay">1</span></div>
     <div>Completed: <span id="dashCompleted">0/0</span></div>
   </div>
+
 </div>
-<div id="authMessage" style="text-align:center;color:#d4af37;"></div>
 
 
 <section id="workouts" class="workouts">
@@ -117,9 +108,8 @@
   <div class="navigation-buttons">
     <button id="prevBtn">⬅ Previous Day</button>
     <button id="nextBtn">Next Day ➡</button>
-
-    <!-- FIX: this button was missing JS -->
     <button id="resetProgress">Reset</button>
+    <button class="app-btn" onclick="open1RMModal()">1RM Calculator</button>
   </div>
 
 
@@ -177,5 +167,22 @@
 
   </div>
 </div>
+<div id="rmModal" class="rm-modal">
+  <div class="rm-box">
+
+    <h2>🏋️ 1RM POWER CALCULATOR</h2>
+
+    <input id="rmInput" type="number" placeholder="Enter your 1RM (lbs)" />
+
+    <div class="rm-buttons">
+      <button onclick="calculate1RM()">Calculate</button>
+      <button onclick="close1RMModal()" class="logout-btn">Close</button>
+    </div>
+
+    <div id="rmResults" class="rm-results"></div>
+
+  </div>
+</div>
+
 </body>
 </html>

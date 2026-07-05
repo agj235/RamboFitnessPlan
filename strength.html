@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Strength Dashboard</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="fitnessLogo2.png">
+</head>
+
+<body>
+
+<header class="app-header">
+  <div class="brand">
+    <img class="header-logo" src="fitnessLogo2.png" />
+
+    <div class="brand-text">
+      <h1>STRENGTH DASHBOARD</h1>
+      <p>Track your 1RM progress</p>
+    </div>
+  </div>
+
+  <button class="app-btn" onclick="window.location.href='index.html'">
+    Back to Training
+  </button>
+  <button class="app-btn" onclick="openStrengthAbout()">About</button>
+</header>
+
+<div class="strength-container">
+
+  <!-- CHART SECTION -->
+  <section class="dashboard">
+    <h2>📈 Strength Progress</h2>
+
+    <canvas id="strengthChart"></canvas>
+
+    <div id="latestStats"></div>
+
+    <p style="color:#aaa; margin-top:10px;">
+      Bench • Squat • Deadlift Tracking
+    </p>
+  </section>
+
+<div class="strength-container">
+
+  <!-- LEFT SIDE: INPUTS -->
+  <div class="strength-panel">
+    <h2>🧪 Strength Test</h2>
+
+    <input id="bench" type="number" placeholder="Bench Press 1RM" />
+    <input id="squat" type="number" placeholder="Squat 1RM" />
+    <input id="deadlift" type="number" placeholder="Deadlift 1RM" />
+
+    <button class="app-btn" onclick="saveStrength()">Save</button>
+  </div>
+
+  <!-- RIGHT SIDE: GUIDE -->
+  <div class="strength-panel">
+    <h3>🧪 1RM Testing Protocol</h3>
+    <button class="app-btn" onclick="open1RMModal()">1RM Calculator</button>
+    <div class="protocol-box">
+      <h4>🔥 Warm-Up</h4>
+      <p>40% × 8 → 55% × 5 → 65% × 3</p>
+
+      <h4>⚡ Ramp Up</h4>
+      <p>75% × 2 → 85% × 1</p>
+
+      <h4>🏋️ Max Attempt</h4>
+      <p>90–100%+ (1 rep max)</p>
+
+      <h4>⏱ Rest</h4>
+      <p>2–5 min between sets</p>
+    </div>
+  </div>
+
+</div>
+<!-- ABOUT STRENGTH MODAL -->
+<div id="strengthAboutModal" class="about-modal">
+  <div class="about-box">
+
+    <h2>🏋️ Strength Dashboard Guide</h2>
+
+    <p>
+      This page tracks your main lifts: Bench Press, Squat, and Deadlift.
+      You can save your numbers over time and see your progress grow.
+    </p>
+
+    <h3>📊 How to Use</h3>
+    <ul>
+      <li>Enter your current 1RM (max lift) for each movement</li>
+      <li>Click <strong>Save</strong> to store your results</li>
+      <li>Your history will appear in the chart automatically</li>
+      <li>Use it at the start and end of your 7-week program</li>
+    </ul>
+
+    <h3>🔥 What to Look For</h3>
+    <ul>
+      <li>Steady increases in strength over time</li>
+      <li>PR (personal record) jumps</li>
+      <li>Consistency week to week</li>
+    </ul>
+
+    <h3>💡 Pro Tip</h3>
+    <p>
+      Test your lifts under similar conditions each time for accurate tracking.
+      Same warm-up, same equipment, same rest.
+    </p>
+
+    <button onclick="closeStrengthAbout()">Close</button>
+
+  </div>
+</div>
+<div id="rmModal" class="rm-modal">
+  <div class="rm-box">
+
+    <h2>🏋️ 1RM POWER CALCULATOR</h2>
+
+    <input id="rmInput" type="number" placeholder="Enter your 1RM (lbs)" />
+
+    <div class="rm-buttons">
+      <button onclick="calculate1RM()">Calculate</button>
+      <button onclick="close1RMModal()" class="logout-btn">Close</button>
+    </div>
+
+    <div id="rmResults" class="rm-results"></div>
+
+  </div>
+</div>
+<!-- SCRIPTS -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+<script src="script.js"></script>
+
+</body>
+</html>
