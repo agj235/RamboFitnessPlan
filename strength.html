@@ -24,54 +24,42 @@
   <button class="app-btn" onclick="openStrengthAbout()">About</button>
 </header>
 
-<div class="strength-container">
+<section class="strength-container">
 
-  <!-- CHART SECTION -->
-  <section class="dashboard">
-    <h2>📈 Strength Progress</h2>
-
+  <!-- TOP DASHBOARD -->
+  <div class="strength-dashboard">
+    <h2>📈 Strength Dashboard</h2>
     <canvas id="strengthChart"></canvas>
-
     <div id="latestStats"></div>
-
-    <p style="color:#aaa; margin-top:10px;">
-      Bench • Squat • Deadlift Tracking
-    </p>
-  </section>
-
-<div class="strength-container">
-
-  <!-- LEFT SIDE: INPUTS -->
-  <div class="strength-panel">
-    <h2>🧪 Strength Test</h2>
-
-    <input id="bench" type="number" placeholder="Bench Press 1RM" />
-    <input id="squat" type="number" placeholder="Squat 1RM" />
-    <input id="deadlift" type="number" placeholder="Deadlift 1RM" />
-
-    <button class="app-btn" onclick="saveStrength()">Save</button>
   </div>
 
-  <!-- RIGHT SIDE: GUIDE -->
-  <div class="strength-panel">
-    <h3>🧪 1RM Testing Protocol</h3>
-    <button class="app-btn" onclick="open1RMModal()">1RM Calculator</button>
-    <div class="protocol-box">
-      <h4>🔥 Warm-Up</h4>
-      <p>40% × 8 → 55% × 5 → 65% × 3</p>
+  <!-- LOWER GRID -->
+  <div class="strength-grid">
 
-      <h4>⚡ Ramp Up</h4>
-      <p>75% × 2 → 85% × 1</p>
+    <!-- LEFT PANEL -->
+    <div class="strength-panel">
+      <h3>🧪 Strength Test</h3>
 
-      <h4>🏋️ Max Attempt</h4>
-      <p>90–100%+ (1 rep max)</p>
+      <input id="bench" type="number" placeholder="Bench 1RM" />
+      <input id="squat" type="number" placeholder="Squat 1RM" />
+      <input id="deadlift" type="number" placeholder="Deadlift 1RM" />
 
-      <h4>⏱ Rest</h4>
-      <p>2–5 min between sets</p>
+      <button onclick="saveStrength()">Save Test</button>
     </div>
+
+    <!-- RIGHT PANEL -->
+    <div class="strength-panel">
+      <h3>🏋️ 1RM Training Protocol</h3>
+
+      <input id="rmInput" type="number" placeholder="Enter 1RM" />
+      <button onclick="calculate1RM()">Generate Percentages</button>
+
+      <div id="rmResults"></div>
+    </div>
+
   </div>
 
-</div>
+</section>
 <!-- ABOUT STRENGTH MODAL -->
 <div id="strengthAboutModal" class="about-modal">
   <div class="about-box">
