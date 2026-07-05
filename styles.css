@@ -1,39 +1,28 @@
 /* ======================================================
-   RAMBO FITNESS – FINAL CLEAN STYLE
-====================================================== */
-
-/* =========================
    ROOT THEME
-========================= */
+====================================================== */
 :root {
   --bg-dark: #0b0b0b;
-  --card: #141414;
+  --card-bg: #141414;
   --card-alt: #1c1c1c;
 
-  --gold: #d4af37;
+  --primary-gold: #d4af37;
   --gold-soft: #ffdf70;
 
-  --btn: linear-gradient(145deg, #d4af37, #b8860b);
-  --btn-hover: #e6c34a;
+  --button-gradient: linear-gradient(145deg, #d4af37, #b8860b);
+  --button-hover: #e6c34a;
 
-  --text: #f0f0f0;
+  --text-light: #f0f0f0;
 }
 
-/* =========================
-   GLOBAL RESET
-========================= */
-* {
-  box-sizing: border-box;
-}
-
+/* ======================================================
+   BASE
+====================================================== */
 body {
   margin: 0;
-  font-family: 'Segoe UI', Arial, sans-serif;
+  font-family: "Segoe UI", Arial, sans-serif;
   background: var(--bg-dark);
-  color: var(--text);
-
-  -webkit-text-size-adjust: 100%;
-  touch-action: manipulation;
+  color: var(--text-light);
 }
 
 /* subtle background glow */
@@ -42,45 +31,45 @@ body::before {
   position: fixed;
   inset: 0;
   background:
-    radial-gradient(circle at top, rgba(212,175,55,0.10), transparent 60%),
-    linear-gradient(180deg, rgba(0,0,0,0.92), rgba(0,0,0,0.98));
+    linear-gradient(180deg, rgba(11,11,11,0.92), rgba(11,11,11,0.98)),
+    url("/fitnessLogo2.png") center/500px no-repeat;
+  opacity: 0.18;
+  filter: blur(12px) saturate(1.2);
   z-index: -1;
 }
 
-/* =========================
+/* ======================================================
    HEADER
-========================= */
+====================================================== */
 .app-header {
-  position: sticky;
-  top: 0;
-  z-index: 50;
-
   display: flex;
   justify-content: space-between;
   align-items: center;
-  flex-wrap: wrap;
-
-  padding: 14px 20px;
+  padding: 15px 20px;
   background: #000;
-  border-bottom: 1px solid var(--gold);
+  border-bottom: 1px solid var(--primary-gold);
+  position: sticky;
+  top: 0;
+  z-index: 50;
 }
 
 .brand {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
 }
 
 .header-logo {
-  width: 44px;
-  height: 44px;
+  width: 45px;
+  height: 45px;
   object-fit: contain;
+  filter: drop-shadow(0 0 6px var(--primary-gold));
 }
 
 .brand-text h1 {
   margin: 0;
   font-size: 18px;
-  color: var(--gold);
+  color: var(--primary-gold);
 }
 
 .brand-text p {
@@ -93,120 +82,46 @@ body::before {
 #userControls {
   display: flex;
   gap: 8px;
-  align-items: center;
 }
 
-/* =========================
+/* ======================================================
    BUTTONS
-========================= */
+====================================================== */
 .app-btn {
   background: #111;
-  color: var(--gold);
-  border: 1px solid var(--gold);
-  padding: 8px 12px;
+  color: var(--primary-gold);
+  border: 1px solid var(--primary-gold);
+  padding: 8px 14px;
   border-radius: 8px;
-  font-weight: bold;
   cursor: pointer;
+  font-weight: bold;
   transition: 0.2s ease;
 }
 
 .app-btn:hover {
-  background: var(--gold);
+  background: var(--primary-gold);
   color: #111;
 }
 
-/* =========================
-   WORKOUT CARDS
-========================= */
-.workouts {
-  max-width: 900px;
-  margin: auto;
-  padding: 20px;
-}
-
-.day-card {
-  background: var(--card);
-  border-radius: 16px;
-  padding: 18px;
-  margin-bottom: 16px;
-  border: 1px solid #222;
-}
-
-.day-card h3 {
-  color: var(--gold);
-}
-
-.day-card li {
-  background: var(--card-alt);
-  padding: 12px;
-  margin: 8px 0;
-  border-radius: 10px;
-  display: flex;
-  gap: 10px;
-  align-items: center;
-}
-
-.day-card input[type="checkbox"] {
-  transform: scale(1.2);
-  accent-color: var(--gold);
-}
-
-/* =========================
-   NAV BUTTONS
-========================= */
-.navigation-buttons {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 10px;
-}
-
-.navigation-buttons button {
-  background: var(--btn);
-  border: none;
-  padding: 10px 14px;
-  border-radius: 12px;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-/* =========================
-   PROGRESS BAR
-========================= */
-.progress-container {
-  height: 12px;
-  background: #1a1a1a;
-  border-radius: 20px;
-  overflow: hidden;
-  margin: 20px 0;
-}
-
-#progressBar {
-  height: 100%;
-  width: 0%;
-  background: linear-gradient(90deg, var(--gold), var(--gold-soft));
-  transition: width 0.4s ease;
-}
-
-/* =========================
-   DASHBOARD (CLEAN PRO)
-========================= */
+/* ======================================================
+   DASHBOARD (UPGRADED)
+====================================================== */
 .dashboard {
-  max-width: 420px;
-  margin: 20px auto;
-  padding: 22px;
-
-  background: #111;
-  border: 1px solid rgba(212,175,55,0.25);
+  max-width: 500px;
+  margin: 25px auto;
+  padding: 20px;
+  background: linear-gradient(145deg, #101010, #141414);
   border-radius: 18px;
-
+  border: 1px solid rgba(212,175,55,0.25);
   text-align: center;
+  box-shadow: 0 10px 35px rgba(0,0,0,0.6);
 }
 
 .dashboard h2 {
-  color: var(--gold);
+  color: var(--primary-gold);
 }
 
+/* stats */
 .dash-stats {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -218,61 +133,71 @@ body::before {
   background: #1a1a1a;
   padding: 12px;
   border-radius: 10px;
-  font-size: 13px;
+  border: 1px solid #2a2a2a;
 }
 
-/* =========================
-   RING
-========================= */
-.ring-wrap {
-  width: 140px;
-  margin: 15px auto;
-}
-
-/* =========================
-   EXERCISE CARD PRO UI
-========================= */
-.exercise-card {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-
-  background: #161616;
+/* ======================================================
+   WORKOUT CARDS (NO JSON CHANGES)
+====================================================== */
+.day-card {
+  background: var(--card-bg);
+  margin: 20px auto;
+  padding: 18px;
+  border-radius: 16px;
   border: 1px solid #222;
-  border-radius: 12px;
+  max-width: 900px;
+}
 
+.day-card h3 {
+  color: var(--primary-gold);
+}
+
+.day-card ul {
+  list-style: none;
+  padding: 0;
+}
+
+.day-card li {
+  background: var(--card-alt);
   padding: 12px;
   margin-bottom: 10px;
-
-  transition: 0.2s ease;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid #222;
 }
 
-.exercise-card:hover {
-  transform: translateX(3px);
-  border-color: rgba(212,175,55,0.4);
+.day-card input[type="checkbox"] {
+  transform: scale(1.2);
+  accent-color: var(--primary-gold);
 }
 
-.exercise-text {
-  flex: 1;
-  margin-left: 10px;
+/* ======================================================
+   PROGRESS BAR
+====================================================== */
+.progress-container {
+  width: 100%;
+  height: 12px;
+  background: #1a1a1a;
+  border-radius: 20px;
+  overflow: hidden;
+  margin: 20px 0;
 }
 
-/* completed */
-.exercise-card.done {
-  opacity: 0.7;
+#progressBar {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--primary-gold), var(--gold-soft));
+  transition: width 0.3s ease;
 }
 
-.exercise-card.done .exercise-text {
-  text-decoration: line-through;
-  color: var(--gold);
-}
-
-/* =========================
-   STRONG STRENGTH PAGE
-========================= */
+/* ======================================================
+   STRENGTH PAGE (FIXED + BIG MOBILE)
+====================================================== */
 .strength-container {
   max-width: 1000px;
-  margin: auto;
+  margin: 30px auto;
   padding: 20px;
 }
 
@@ -286,7 +211,7 @@ body::before {
   background: #111;
   border: 1px solid rgba(212,175,55,0.2);
   border-radius: 14px;
-  padding: 18px;
+  padding: 20px;
 }
 
 .strength-panel input {
@@ -294,63 +219,73 @@ body::before {
   padding: 12px;
   margin: 8px 0;
   border-radius: 8px;
-  border: 1px solid #333;
   background: #1a1a1a;
+  border: 1px solid #333;
   color: white;
 }
 
-/* =========================
-   CANVAS FIX
-========================= */
-canvas {
-  width: 100% !important;
-  height: 300px !important;
-  background: #111;
-  border-radius: 12px;
-}
-
-/* =========================
-   MODALS
-========================= */
+/* ======================================================
+   MODALS (ABOUT + LOGIN + STRENGTH)
+====================================================== */
 .about-modal,
-.login-modal {
+.login-modal,
+#strengthModal {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.9);
+  background: rgba(0,0,0,0.88);
   display: none;
   justify-content: center;
   align-items: center;
   z-index: 9999;
-}
-
-.about-box,
-.login-box {
-  background: #111;
-  border: 1px solid var(--gold);
+  overflow-y: auto;
   padding: 20px;
-  border-radius: 12px;
-  max-width: 500px;
-  width: 90%;
 }
 
-/* scroll fix */
 .about-box {
-  max-height: 80vh;
+  background: #111;
+  border: 1px solid var(--primary-gold);
+  border-radius: 12px;
+  max-width: 600px;
+  width: 90%;
+  padding: 20px;
+  max-height: 85vh;
   overflow-y: auto;
 }
 
-/* =========================
-   MOBILE
-========================= */
+/* ======================================================
+   SPLASH SCREEN
+====================================================== */
+.splash-screen {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 99999;
+  animation: fadeOut 1s ease forwards;
+  animation-delay: 2.5s;
+}
+
+.splash-content img {
+  width: 45vw;
+  max-width: 160px;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%,100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+@keyframes fadeOut {
+  to { opacity: 0; visibility: hidden; }
+}
+
+/* ======================================================
+   MOBILE FIX (THIS FIXES YOUR IPHONE ISSUE)
+====================================================== */
 @media (max-width: 768px) {
-
-  .strength-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .dash-stats {
-    grid-template-columns: 1fr;
-  }
 
   .app-header {
     flex-direction: column;
@@ -360,13 +295,32 @@ canvas {
 
   #userControls {
     justify-content: center;
-    flex-wrap: wrap;
+    width: 100%;
   }
 
-  .strength-panel input,
-  .strength-panel button {
-    width: 100%;
+  .dashboard {
+    max-width: 95%;
+  }
+
+  .strength-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .day-card {
+    margin: 10px;
+  }
+
+  body {
+    font-size: 16px; /* FIX: prevents “tiny iPhone UI” */
+  }
+
+  .strength-panel input {
     font-size: 16px;
     padding: 14px;
+  }
+
+  .app-btn {
+    width: 100%;
+    padding: 12px;
   }
 }
