@@ -1517,3 +1517,28 @@ circle.progress {
     padding: 8px 10px;
   }
 }
+.strength-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.strength-panel {
+  background: #111;
+  border: 1px solid rgba(212,175,55,0.2);
+  padding: 20px;
+  border-radius: 14px;
+}
+
+.strength-panel h3 {
+  color: #d4af37;
+  margin-bottom: 10px;
+}
+
+/* mobile stack */
+@media (max-width: 768px) {
+  .strength-grid {
+    grid-template-columns: 1fr;
+  }
+}
