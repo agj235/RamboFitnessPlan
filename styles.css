@@ -428,7 +428,7 @@ circle {
   }
 
   .navigation-buttons {
-    flex-direction: column;
+    flex-direction:row;
   }
 }
 
@@ -577,20 +577,12 @@ circle {
 /* =========================
    HEADER BRAND
 ========================= */
-.app-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 15px 20px;
-  background: #000;
-  border-bottom: 1px solid #d4af37;
-  flex-wrap: wrap;
-}
+
 
 .brand {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 15px;
 }
 
 .header-logo {
@@ -963,13 +955,6 @@ body {
   background: #0b0b0b;
   color: #fff;
   font-family: Arial, sans-serif;
-}
-
-/* Main container */
-.strength-container {
-  max-width: 900px;
-  margin: 40px auto;
-  padding: 20px;
 }
 
 /* Section titles */
@@ -1398,13 +1383,6 @@ circle.progress {
   font-size: 13px;
 }
 
-.strength-container {
-  display: flex;
-  gap: 20px;
-  max-width: 1000px;
-  margin: 40px auto;
-  padding: 20px;
-}
 
 /* each side */
 .strength-panel {
