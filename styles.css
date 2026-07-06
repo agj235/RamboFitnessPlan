@@ -566,9 +566,12 @@ circle {
    USER CONTROLS
 ========================= */
 #userControls {
+  position: absolute;
+  top: 10px;
+  right: 10px;
   display: flex;
   gap: 8px;
-  align-items: center;
+  z-index: 10;
 }
 
 /* =========================
@@ -890,6 +893,13 @@ circle {
   color: #ddd;
 }
 
+.rm-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+  border-bottom: 1px solid #222;
+}
+
 /* =========================
    SECTION HEADERS INSIDE MODAL
 ========================= */
@@ -945,35 +955,18 @@ canvas {
    STRENGTH DASHBOARD PAGE
    ========================= */
 
-/* MOBILE OVERRIDE = FULL SCREEN APP FEEL */
-@media (max-width: 768px) {
+/* Page background consistency */
+body {
+  background: #0b0b0b;
+  color: #fff;
+  font-family: Arial, sans-serif;
+}
 
-  .strength-container {
-    width: 100%;
-    max-width: 100%;
-    margin: 0;
-    padding: 12px;
-  }
-
-  .strength-dashboard {
-    margin: 10px 0;
-    padding: 16px;
-    border-radius: 16px;
-  }
-
-  .strength-grid {
-    gap: 12px;
-  }
-
-  .strength-panel {
-    padding: 16px;
-    border-radius: 16px;
-  }
-
-  canvas {
-    width: 100% !important;
-    height: auto !important;
-  }
+/* Main container */
+.strength-container {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 20px;
 }
 
 /* Section titles */
@@ -982,6 +975,17 @@ canvas {
 .strength-container h3 {
   color: #d4af37;
   margin-bottom: 10px;
+}
+
+/* Strength stat rows */
+.rm-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 15px;
+  margin: 8px 0;
+  background: #1a1a1a;
+  border-radius: 10px;
+  border: 1px solid #2a2a2a;
 }
 
 /* Inputs (bench/squat/deadlift/1RM) */
@@ -1365,6 +1369,7 @@ circle.progress {
   50% { transform: scale(1.01); box-shadow: 0 0 25px rgba(212,175,55,0.2); }
   100% { transform: scale(1); }
 }
+
 .strength-guide {
   background: #111;
   border: 1px solid rgba(212,175,55,0.2);
@@ -1384,40 +1389,23 @@ circle.progress {
   margin-bottom: 10px;
 }
 
-.protocol-box {
-  background: #0f0f0f;
-  padding: 12px;
-  border-radius: 10px;
-  border: 1px solid rgba(212,175,55,0.15);
-}
-
 .protocol-box p {
   margin: 6px 0;
-  font-size: 13px;
   color: #ddd;
+  font-size: 13px;
 }
 
-.protocol-box strong {
-  color: #d4af37;
-}
-
-/* MAIN LAYOUT */
 .strength-container {
+  display: flex;
+  gap: 20px;
   max-width: 1000px;
   margin: 40px auto;
   padding: 20px;
 }
 
-/* GRID SYSTEM (desktop split view) */
-.strength-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-  margin-top: 20px;
-}
-
-/* PANELS */
+/* each side */
 .strength-panel {
+  flex: 1;
   background: #111;
   border: 1px solid rgba(212,175,55,0.2);
   border-radius: 14px;
@@ -1435,78 +1423,9 @@ circle.progress {
   color: white;
 }
 
-/* MOBILE */
+/* mobile fallback */
 @media (max-width: 768px) {
-
-  body {
-    font-size: 16px;
-  }
-
-  .strength-grid {
-    grid-template-columns: 1fr;
-  }
-
   .strength-container {
-    padding: 15px;
-  }
-
-  .strength-panel {
-    padding: 18px;
-    border-radius: 16px;
-  }
-
-  .strength-panel input {
-    padding: 14px;
-    font-size: 16px;
-  }
-
-  .strength-panel button,
-  .app-btn {
-    width: 100%;
-    padding: 14px;
-    font-size: 16px;
-    margin-top: 10px;
-  }
-
-  .rm-row {
-    padding: 14px;
-    font-size: 14px;
-  }
-}
-
-/* HEADER MOBILE FIX (keep ONE version only) */
-@media (max-width: 600px) {
-
-  .app-header {
     flex-direction: column;
-    align-items: center;
-    text-align: center;
-    gap: 12px;
-    padding-top: 20px;
-  }
-
-  #userControls {
-    position: static;
-    width: 100%;
-    justify-content: center;
-    flex-wrap: wrap;
-  }
-
-  .brand {
-    flex-direction: column;
-    text-align: center;
-  }
-
-  .brand-text h1 {
-    font-size: 16px;
-  }
-
-  .brand-text p {
-    font-size: 11px;
-  }
-
-  .app-btn {
-    font-size: 12px;
-    padding: 8px 10px;
   }
 }
