@@ -30,26 +30,18 @@
     const cacheBuster = Date.now();
     const pageUrl = new URL(window.location.href);
     const normalizedPath = pageUrl.pathname.replace(/index\.html$/i, '').replace(/\/?$/, '/');
-    const pageBaseUrl = new URL(normalizedPath, pageUrl.origin);
+    const segments = normalizedPath.split('/').filter(Boolean);
+    const repoSegment = segments.length > 1 ? `/${segments[0]}` : '';
+    const absoluteBase = `${pageUrl.origin}${normalizedPath}`;
 
-    const scriptCandidates = [];
-    const scriptSrc = document.currentScript?.src || Array.from(document.scripts).map((script) => script.src).find((src) => src.includes('training.js'));
-    if (scriptSrc) {
-      const scriptBaseUrl = new URL('.', scriptSrc);
-      scriptCandidates.push(
-        new URL(`../data/${fileName}`, scriptBaseUrl).toString(),
-        new URL(`./data/${fileName}`, scriptBaseUrl).toString(),
-        new URL(`data/${fileName}`, scriptBaseUrl).toString()
-      );
-    }
-
-    const pageCandidates = [
-      new URL(`./data/${fileName}`, pageBaseUrl).toString(),
-      new URL(`data/${fileName}`, pageBaseUrl).toString(),
-      `${pageBaseUrl.origin}${pageBaseUrl.pathname.replace(/\/+$/, '')}/data/${fileName}`
+    const candidates = [
+      `${absoluteBase}data/${fileName}`,
+      `${pageUrl.origin}${repoSegment}/data/${fileName}`,
+      `${pageUrl.origin}/data/${fileName}`,
+      `./data/${fileName}`,
+      `data/${fileName}`
     ];
 
-    const candidates = [...scriptCandidates, ...pageCandidates, `./data/${fileName}`, `data/${fileName}`];
     return Array.from(new Set(candidates)).map((candidate) => {
       const separator = candidate.includes('?') ? '&' : '?';
       return `${candidate}${separator}v=${cacheBuster}`;
