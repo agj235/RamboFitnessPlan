@@ -27,10 +27,12 @@
 
   function getWorkoutDataCandidates(programKey) {
     const fileName = programKey === '4day' ? 'workouts4day.json' : 'workouts5day.json';
-    const baseUrl = new URL('./', window.location.href);
+    const baseUrl = new URL(window.location.href);
+    baseUrl.pathname = baseUrl.pathname.endsWith('/') ? baseUrl.pathname : `${baseUrl.pathname}/`;
+
     const candidates = [
-      new URL(`./data/${fileName}`, baseUrl).toString(),
       new URL(`data/${fileName}`, baseUrl).toString(),
+      new URL(`./data/${fileName}`, baseUrl).toString(),
       `./data/${fileName}`,
       `data/${fileName}`
     ];
