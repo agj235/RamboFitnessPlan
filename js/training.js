@@ -25,28 +25,24 @@
     return state.currentWorkouts?.length ? state.currentWorkouts : fallbackPlans[state.currentProgram || '5day'];
   }
 
-  function getWorkoutDataCandidates(programKey) {
-    const fileName = programKey === '4day' ? 'workouts4day.json' : 'workouts5day.json';
+function getWorkoutDataCandidates(programKey) {
+
+    const fileName = programKey === '4day'
+        ? 'workouts4day.json'
+        : 'workouts5day.json';
+
     const cacheBuster = Date.now();
-    const pageUrl = new URL(window.location.href);
-    const normalizedPath = pageUrl.pathname.replace(/index\.html$/i, '').replace(/\/?$/, '/');
-    const segments = normalizedPath.split('/').filter(Boolean);
-    const repoSegment = segments.length > 1 ? `/${segments[0]}` : '';
-    const absoluteBase = `${pageUrl.origin}${normalizedPath}`;
 
     const candidates = [
-      `${absoluteBase}data/${fileName}`,
-      `${pageUrl.origin}${repoSegment}/data/${fileName}`,
-      `${pageUrl.origin}/data/${fileName}`,
-      `./data/${fileName}`,
-      `data/${fileName}`
+        `/RamboFitnessPlan/data/${fileName}`,
+        `./data/${fileName}`,
+        `data/${fileName}`
     ];
 
-    return Array.from(new Set(candidates)).map((candidate) => {
-      const separator = candidate.includes('?') ? '&' : '?';
-      return `${candidate}${separator}v=${cacheBuster}`;
+    return candidates.map((candidate) => {
+        return `${candidate}?v=${cacheBuster}`;
     });
-  }
+}
 
   async function loadWorkoutData(programKey) {
     const candidates = getWorkoutDataCandidates(programKey);
