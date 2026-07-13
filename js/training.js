@@ -27,17 +27,29 @@
 
   function getWorkoutDataCandidates(programKey) {
     const fileName = programKey === '4day' ? 'workouts4day.json' : 'workouts5day.json';
-    const baseUrl = new URL(window.location.href);
-    baseUrl.pathname = baseUrl.pathname.endsWith('/') ? baseUrl.pathname : `${baseUrl.pathname}/`;
+    const cacheBuster = Date.now();
+    const pageUrl = new URL(window.location.href);
+    const normalizedPath = pageUrl.pathname.replace(/index\.html$/i, '').replace(/\/?$/, '/');
+    const pageBaseUrl = new URL(normalizedPath, pageUrl.origin);
 
-    const candidates = [
-      new URL(`data/${fileName}`, baseUrl).toString(),
-      new URL(`./data/${fileName}`, baseUrl).toString(),
-      `./data/${fileName}`,
-      `data/${fileName}`
+    const scriptCandidates = [];
+    const scriptSrc = document.currentScript?.src || Array.from(document.scripts).map((script) => script.src).find((src) => src.includes('training.js'));
+    if (scriptSrc) {
+      const scriptBaseUrl = new URL('.', scriptSrc);
+      scriptCandidates.push(
+        new URL(`../data/${fileName}`, scriptBaseUrl).toString(),
+        new URL(`./data/${fileName}`, scriptBaseUrl).toString(),
+        new URL(`data/${fileName}`, scriptBaseUrl).toString()
+      );
+    }
+
+    const pageCandidates = [
+      new URL(`./data/${fileName}`, pageBaseUrl).toString(),
+      new URL(`data/${fileName}`, pageBaseUrl).toString(),
+      `${pageBaseUrl.origin}${pageBaseUrl.pathname.replace(/\/+$/, '')}/data/${fileName}`
     ];
 
-    const cacheBuster = Date.now();
+    const candidates = [...scriptCandidates, ...pageCandidates, `./data/${fileName}`, `data/${fileName}`];
     return Array.from(new Set(candidates)).map((candidate) => {
       const separator = candidate.includes('?') ? '&' : '?';
       return `${candidate}${separator}v=${cacheBuster}`;
