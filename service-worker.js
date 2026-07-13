@@ -1,4 +1,4 @@
-const CACHE_NAME = 'rambo-fitness-cache-v3';
+const CACHE_NAME = 'rambo-fitness-cache-v5';
 const urlsToCache = [
   './',
   './index.html',
