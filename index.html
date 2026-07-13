@@ -32,6 +32,9 @@
           <button class="secondary-btn" onclick="window.appController.register()">Create account</button>
           <button class="secondary-btn" onclick="window.appController.closeLogin()">Skip</button>
         </div>
+        <div class="button-row">
+          <button class="ghost-btn" onclick="window.appController.resetPassword()">Reset password</button>
+        </div>
         <p class="status-text">Use Create account to sign up with Firebase, or skip for preview mode.</p>
         <p id="loginStatus" class="status-text"></p>
       </div>
@@ -64,6 +67,7 @@
         <div class="header-actions" id="userControls">
           <button class="ghost-btn" onclick="window.appController.openAbout()">About</button>
           <button class="ghost-btn" onclick="window.appController.open1RM()">1RM</button>
+          <button class="ghost-btn" onclick="window.appController.logout()">Logout</button>
         </div>
       </header>
 

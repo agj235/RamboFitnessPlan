@@ -142,6 +142,28 @@
       });
   }
 
+  function resetPassword() {
+    const email = window.RamboUtils?.getEl('email')?.value || '';
+
+    if (!email) {
+      window.RamboUtils?.setText('loginStatus', 'Please enter your email to reset your password.');
+      return;
+    }
+
+    if (!auth()) {
+      window.RamboUtils?.setText('loginStatus', 'Password reset is available in Firebase-enabled mode.');
+      return;
+    }
+
+    auth().sendPasswordResetEmail(email)
+      .then(() => {
+        window.RamboUtils?.setText('loginStatus', 'Password reset email sent.');
+      })
+      .catch((err) => {
+        window.RamboUtils?.setText('loginStatus', err.message || 'Password reset failed.');
+      });
+  }
+
   function logout() {
     if (!auth()) {
       clearPreviewUser();

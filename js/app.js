@@ -189,6 +189,7 @@
   window.appController = {
     login: window.RamboAuth?.login,
     register: window.RamboAuth?.register,
+    resetPassword: window.RamboAuth?.resetPassword,
     logout: window.RamboAuth?.logout,
     closeLogin: () => window.RamboUtils?.showModal('loginModal', false),
     openAbout: window.RamboSettings?.openAbout,
