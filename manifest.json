@@ -1,8 +1,11 @@
 {
   "name": "Rambo Fitness Plan",
   "short_name": "RamboFit",
+  "description": "7-week muscle endurance training app",
   "start_url": "./index.html",
+  "scope": "./",
   "display": "standalone",
+  "orientation": "portrait",
   "background_color": "#0f0f0f",
   "theme_color": "#d4af37",
   "icons": [
