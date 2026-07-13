@@ -38,6 +38,52 @@
     }
   }
 
+  function getStoredPreviewUser() {
+    try {
+      const raw = localStorage.getItem('ramboPreviewUser');
+      return raw ? JSON.parse(raw) : null;
+    } catch (err) {
+      return null;
+    }
+  }
+
+  function persistPreviewUser(user) {
+    try {
+      localStorage.setItem('ramboPreviewUser', JSON.stringify(user));
+    } catch (err) {
+      // Ignore storage failures in preview mode.
+    }
+  }
+
+  function clearPreviewUser() {
+    try {
+      localStorage.removeItem('ramboPreviewUser');
+    } catch (err) {
+      // Ignore storage failures in preview mode.
+    }
+  }
+
+  function previewAuth(email, password) {
+    const normalizedEmail = (email || '').trim().toLowerCase();
+    const normalizedPassword = (password || '').trim();
+
+    if (!normalizedEmail || !normalizedPassword) {
+      return Promise.reject(new Error('Please enter your email and password.'));
+    }
+
+    const previewUser = {
+      uid: `preview-${Math.random().toString(36).slice(2, 10)}`,
+      email: normalizedEmail,
+      displayName: normalizedEmail.split('@')[0]
+    };
+
+    persistPreviewUser(previewUser);
+    state.currentUser = previewUser;
+    handleAuthState(previewUser);
+
+    return Promise.resolve(previewUser);
+  }
+
   function login() {
     const email = window.RamboUtils?.getEl('email')?.value || '';
     const password = window.RamboUtils?.getEl('password')?.value || '';
@@ -48,7 +94,13 @@
     }
 
     if (!auth()) {
-      window.RamboUtils?.setText('loginStatus', 'Firebase is unavailable in this preview.');
+      previewAuth(email, password)
+        .then(() => {
+          window.RamboUtils?.setText('loginStatus', 'Preview mode active. You are signed in locally.');
+        })
+        .catch((err) => {
+          window.RamboUtils?.setText('loginStatus', err.message || 'Login failed.');
+        });
       return;
     }
 
@@ -68,7 +120,13 @@
     }
 
     if (!auth()) {
-      window.RamboUtils?.setText('loginStatus', 'Firebase is unavailable in this preview.');
+      previewAuth(email, password)
+        .then(() => {
+          window.RamboUtils?.setText('loginStatus', 'Preview account created locally.');
+        })
+        .catch((err) => {
+          window.RamboUtils?.setText('loginStatus', err.message || 'Registration failed.');
+        });
       return;
     }
 
@@ -83,6 +141,7 @@
 
   function logout() {
     if (!auth()) {
+      clearPreviewUser();
       state.currentUser = null;
       handleAuthState(null);
       return;
@@ -96,7 +155,13 @@
 
   function initAuth() {
     if (!auth()) {
-      handleAuthState(null);
+      const savedPreviewUser = getStoredPreviewUser();
+      if (savedPreviewUser) {
+        state.currentUser = savedPreviewUser;
+        handleAuthState(savedPreviewUser);
+      } else {
+        handleAuthState(null);
+      }
       return;
     }
 
