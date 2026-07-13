@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Rambo Fitness Plan</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="manifest" href="manifest.json" />
+    <link rel="icon" href="images/rambo-logo.png" type="image/png" />
+    <link rel="apple-touch-icon" href="images/rambo-logo.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="theme-color" content="#ff3b30" />
+  </head>
+  <body>
+    <div class="splash-screen" id="splash">
+      <div class="splash-content">
+        <div class="logo-badge logo-image"></div>
+        <h1>RAMBO FITNESS PLAN</h1>
+        <p>7-Week Warrior Program</p>
+        <div class="splash-line"></div>
+      </div>
+    </div>
+
+    <div id="loginModal" class="modal active">
+      <div class="modal-box login-box">
+        <h2>Rambo Fitness Login</h2>
+        <input type="email" id="email" placeholder="Email" autocomplete="email" />
+        <input type="password" id="password" placeholder="Password" autocomplete="current-password" />
+        <div class="button-row">
+          <button class="primary-btn" onclick="window.appController.login()">Login</button>
+          <button class="secondary-btn" onclick="window.appController.closeLogin()">Skip</button>
+        </div>
+        <p id="loginStatus" class="status-text"></p>
+      </div>
+    </div>
+
+    <div class="app-shell">
+      <div id="pwaPrompt" class="toast toast-info hidden" role="status" aria-live="polite">
+        <span>Install Rambo Fitness for offline access and quick launch.</span>
+        <button id="installBtn" class="toast-action">Install</button>
+        <button id="dismissInstallBtn" class="toast-close" aria-label="Dismiss">×</button>
+      </div>
+      <div id="completionToast" class="toast toast-success hidden" role="status" aria-live="polite">
+        <span>Nice work! Your workout is complete.</span>
+        <button id="completionCloseBtn" class="toast-close" aria-label="Dismiss">×</button>
+      </div>
+      <div id="offlineBanner" class="offline-banner hidden" role="status">Offline mode active. Your progress is saved locally.</div>
+      <div id="iosInstallBanner" class="ios-install-banner hidden" role="status" aria-live="polite">
+        <span>Apple users: tap the Safari share button and choose “Add to Home Screen” for the best app experience.</span>
+        <button id="dismissIosBanner" class="toast-close" aria-label="Dismiss">×</button>
+      </div>
+      <header class="app-header">
+        <div class="brand">
+          <div class="logo-badge logo-image"></div>
+          <div class="brand-text">
+            <h1>RAMBO FITNESS PLAN</h1>
+            <p>7-week Muscle Endurance Program</p>
+          </div>
+        </div>
+
+        <div class="header-actions" id="userControls">
+          <button class="ghost-btn" onclick="window.appController.openAbout()">About</button>
+          <button class="ghost-btn" onclick="window.appController.open1RM()">1RM</button>
+        </div>
+      </header>
+
+      <nav class="app-nav" aria-label="Primary navigation">
+        <button class="nav-btn active" data-view="home">Home</button>
+        <button class="nav-btn" data-view="training">Training</button>
+        <button class="nav-btn" data-view="strength">Strength</button>
+        <button class="nav-btn" data-view="progress">Progress</button>
+        <button class="nav-btn" data-view="settings">Settings</button>
+      </nav>
+
+      <main class="content-area">
+        <section id="home" class="view active">
+          <div class="hero-card">
+            <div>
+              <p class="eyebrow">Today’s focus</p>
+              <h2>Train hard. Build endurance. Track your progress.</h2>
+              <p>Follow the full program, recover smart, and keep the momentum going.</p>
+            </div>
+            <button class="primary-btn" onclick="window.appController.setView('training')">Start training</button>
+          </div>
+
+          <div class="stats-grid">
+            <article class="card stat-card">
+              <span class="card-label">Daily progress</span>
+              <strong id="dashPercent">72%</strong>
+              <small>Program completion</small>
+            </article>
+            <article class="card stat-card">
+              <span class="card-label">Current day</span>
+              <strong id="dashDay">4</strong>
+              <small>Keep the streak alive</small>
+            </article>
+            <article class="card stat-card">
+              <span class="card-label">Recovery</span>
+              <strong>7.4h</strong>
+              <small>Average sleep</small>
+            </article>
+          </div>
+          <div class="home-panel-grid">
+            <article class="card resume-card">
+              <span class="badge" id="homeResumeBadge">Resume</span>
+              <h3 id="homeResumeTitle">Ready to start your first workout?</h3>
+              <p id="homeResumeText">Pick a program, choose your day, and keep the momentum going.</p>
+              <button class="primary-btn" onclick="window.appController.setView('training')">Continue training</button>
+            </article>
+            <article class="card streak-card">
+              <span class="card-label">Current streak</span>
+              <strong id="dashStreak">0 days</strong>
+              <p>Stay consistent to build strength faster.</p>
+            </article>
+          </div>
+        </section>
+
+        <section id="training" class="view">
+          <div class="section-header">
+            <div>
+              <h2>Training</h2>
+              <span class="badge intensity-badge" id="dayIntensity">Power day</span>
+            </div>
+            <div class="button-row">
+              <button class="secondary-btn" id="prevBtn">⬅ Previous day</button>
+              <button class="secondary-btn" id="nextBtn">Next day ➡</button>
+              <button class="secondary-btn" id="markAllDoneBtn">Mark all done</button>
+              <button class="secondary-btn" id="resetProgress">Reset</button>
+            </div>
+          </div>
+
+          <div class="program-selector card">
+            <label for="programSelect">Choose Program</label>
+            <select id="programSelect">
+              <option value="5day">5-Day Program</option>
+              <option value="4day">4-Day Program</option>
+            </select>
+          </div>
+
+          <div id="workoutContainer" class="card-list"></div>
+        </section>
+
+        <section id="strength" class="view">
+          <div class="section-header">
+            <h2>Strength</h2>
+            <div class="button-row">
+              <button class="secondary-btn" onclick="window.RamboStrength.openStrengthAbout()">Strength guide</button>
+              <button class="secondary-btn" onclick="window.appController.open1RM()">1RM Calculator</button>
+            </div>
+          </div>
+
+          <div class="strength-shell">
+            <section class="dashboard strength-dashboard">
+              <h2>📈 Strength Progress</h2>
+              <canvas id="strengthChart"></canvas>
+              <div id="strengthStats"></div>
+              <div id="latestStats"></div>
+              <p class="muted-note">Bench • Squat • Deadlift tracking</p>
+            </section>
+
+            <div class="strength-grid">
+              <div class="strength-panel card">
+                <h3>🧪 Strength Test</h3>
+                <input id="bench" type="number" placeholder="Bench Press 1RM" />
+                <input id="squat" type="number" placeholder="Squat 1RM" />
+                <input id="deadlift" type="number" placeholder="Deadlift 1RM" />
+                <button class="primary-btn" onclick="window.RamboStrength.saveStrength()">Save</button>
+              </div>
+
+              <div class="strength-panel card">
+                <h3>🧪 1RM Testing Protocol</h3>
+                <div class="protocol-box">
+                  <h4>🔥 Warm-Up</h4>
+                  <p>40% × 8 → 55% × 5 → 65% × 3</p>
+                  <h4>⚡ Ramp Up</h4>
+                  <p>75% × 2 → 85% × 1</p>
+                  <h4>🏋️ Max Attempt</h4>
+                  <p>90–100%+ (1 rep max)</p>
+                  <h4>⏱ Rest</h4>
+                  <p>2–5 min between sets</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="progress" class="view">
+          <div class="section-header">
+            <h2>Progress</h2>
+            <button class="secondary-btn">Update log</button>
+          </div>
+          <div class="progress-card card">
+            <h3>Weekly progress</h3>
+            <div class="progress-row">
+              <span>Workout completion</span>
+              <strong>82%</strong>
+            </div>
+            <div class="bar"><span style="width: 82%"></span></div>
+            <div class="progress-row">
+              <span>Strength gain</span>
+              <strong>+6%</strong>
+            </div>
+            <div class="bar"><span style="width: 72%"></span></div>
+          </div>
+        </section>
+
+        <section id="settings" class="view">
+          <div class="section-header">
+            <h2>Settings</h2>
+            <button class="secondary-btn">Save</button>
+          </div>
+          <div class="card-list">
+            <article class="card">
+              <h3>Preferences</h3>
+              <p>Goal: muscle gain • 4 workouts per week</p>
+            </article>
+            <article class="card">
+              <h3>Notifications</h3>
+              <p>Reminders enabled for mornings and evenings</p>
+            </article>
+            <article class="card">
+              <h3>Account</h3>
+              <p>Connected to your fitness profile</p>
+            </article>
+          </div>
+        </section>
+      </main>
+      <nav class="app-bottom-nav" aria-label="Bottom navigation">
+        <button class="nav-btn" data-view="home">Home</button>
+        <button class="nav-btn" data-view="training">Training</button>
+        <button class="nav-btn" data-view="strength">Strength</button>
+        <button class="nav-btn" data-view="progress">Progress</button>
+        <button class="nav-btn" data-view="settings">Settings</button>
+      </nav>
+    </div>
+
+    <div id="aboutModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="aboutTitle">
+      <div class="modal-box">
+        <button class="close-btn" onclick="window.appController.closeAbout()" aria-label="Close about dialog">×</button>
+        <h2 id="aboutTitle">About Rambo Fitness</h2>
+        <p>The Rambo Fitness Plan is built to push endurance, strength, and discipline through a consistent seven-week program.</p>
+        <button class="primary-btn" onclick="window.appController.closeAbout()">Close</button>
+      </div>
+    </div>
+
+    <div id="strengthAboutModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="strengthAboutTitle">
+      <div class="modal-box">
+        <button class="close-btn" onclick="window.RamboStrength.closeStrengthAbout()" aria-label="Close strength guide">×</button>
+        <h2 id="strengthAboutTitle">Strength Dashboard Guide</h2>
+        <p>This section tracks your main lifts, including Bench Press, Squat, and Deadlift, so you can compare your progress over time.</p>
+        <ul>
+          <li>Enter your current 1RM for each movement</li>
+          <li>Click Save to store your numbers</li>
+          <li>Your history will appear in the chart automatically</li>
+        </ul>
+        <button class="primary-btn" onclick="window.RamboStrength.closeStrengthAbout()">Close</button>
+      </div>
+    </div>
+
+    <div id="rmModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="rmTitle">
+      <div class="modal-box">
+        <button class="close-btn" onclick="window.appController.close1RM()" aria-label="Close 1RM dialog">×</button>
+        <h2 id="rmTitle">1RM Calculator</h2>
+        <input id="rmInput" type="number" placeholder="Enter your estimate" />
+        <div class="button-row">
+          <button class="primary-btn" onclick="window.appController.calculate1RM()">Calculate</button>
+          <button class="secondary-btn" onclick="window.appController.close1RM()">Close</button>
+        </div>
+        <div id="rmResults" class="status-text"></div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="js/firebase.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/training.js"></script>
+    <script src="js/progress.js"></script>
+    <script src="js/strength.js"></script>
+    <script src="js/settings.js"></script>
+    <script src="js/navigation.js"></script>
+    <script src="js/app.js"></script>
+  </body>
+</html>
