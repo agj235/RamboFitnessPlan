@@ -17,7 +17,10 @@
       if (loginModal) loginModal.style.display = 'none';
       if (userControls) userControls.style.display = 'block';
     } else {
-      if (loginModal) loginModal.style.display = 'flex';
+      if (loginModal) {
+        loginModal.style.display = 'flex';
+        loginModal.classList.add('active');
+      }
       if (userControls) userControls.style.display = 'none';
     }
   }

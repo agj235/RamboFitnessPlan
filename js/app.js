@@ -131,6 +131,12 @@
     window.RamboAuth?.initAuth();
     window.RamboStrength?.loadStrengthHistory?.();
 
+    const loginModal = window.RamboUtils?.getEl('loginModal');
+    if (loginModal) {
+      loginModal.style.display = 'flex';
+      loginModal.classList.add('active');
+    }
+
     updateOfflineBanner();
     updateHomeSummary();
     initializePwaInstall();
