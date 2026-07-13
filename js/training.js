@@ -134,11 +134,15 @@ function getWorkoutDataCandidates(programKey) {
   }
 
   function showDay(day) {
+    console.log("Saving Day:", day);
     state.currentDay = day;
-    window.RamboUtils?.setStorage('currentDay', day);
+
+    // Save current workout day
+    localStorage.setItem('currentDay', day);
+
     renderWorkouts();
     window.updateHomeSummary?.();
-  }
+}
 
   function changeDay(delta) {
     const dayPlans = getActiveWorkouts();
