@@ -35,7 +35,11 @@
       `data/${fileName}`
     ];
 
-    return Array.from(new Set(candidates));
+    const cacheBuster = Date.now();
+    return Array.from(new Set(candidates)).map((candidate) => {
+      const separator = candidate.includes('?') ? '&' : '?';
+      return `${candidate}${separator}v=${cacheBuster}`;
+    });
   }
 
   async function loadWorkoutData(programKey) {
@@ -43,7 +47,10 @@
 
     for (const url of candidates) {
       try {
-        const response = await fetch(url, { cache: 'no-store' });
+        const response = await fetch(url, {
+          cache: 'no-store',
+          headers: { 'Cache-Control': 'no-cache' }
+        });
         if (!response.ok) continue;
         const data = await response.json();
         if (Array.isArray(data) && data.length) {
