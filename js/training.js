@@ -25,6 +25,38 @@
     return state.currentWorkouts?.length ? state.currentWorkouts : fallbackPlans[state.currentProgram || '5day'];
   }
 
+  function getWorkoutDataCandidates(programKey) {
+    const fileName = programKey === '4day' ? 'workouts4day.json' : 'workouts5day.json';
+    const baseUrl = new URL('./', window.location.href);
+    const candidates = [
+      new URL(`./data/${fileName}`, baseUrl).toString(),
+      new URL(`data/${fileName}`, baseUrl).toString(),
+      `./data/${fileName}`,
+      `data/${fileName}`
+    ];
+
+    return Array.from(new Set(candidates));
+  }
+
+  async function loadWorkoutData(programKey) {
+    const candidates = getWorkoutDataCandidates(programKey);
+
+    for (const url of candidates) {
+      try {
+        const response = await fetch(url, { cache: 'no-store' });
+        if (!response.ok) continue;
+        const data = await response.json();
+        if (Array.isArray(data) && data.length) {
+          return data;
+        }
+      } catch (err) {
+        // Try the next candidate.
+      }
+    }
+
+    throw new Error('Unable to load workout data from any candidate URL.');
+  }
+
   function parseExerciseDetail(exercise) {
     const match = exercise.match(/(.+?)\s+(\d[\dx\s\w]+)/i);
     return match ? { name: match[1], detail: match[2] } : { name: exercise, detail: '' };
@@ -108,13 +140,10 @@
 
   async function refreshProgram() {
     const programKey = state.currentProgram === '4day' ? '4day' : '5day';
-    try {
-      const response5 = await fetch('data/workouts5day.json');
-      const response4 = await fetch('data/workouts4day.json');
-      const data5 = await response5.json();
-      const data4 = await response4.json();
 
-      state.currentWorkouts = programKey === '4day' ? data4 : data5;
+    try {
+      const data = await loadWorkoutData(programKey);
+      state.currentWorkouts = data;
     } catch (err) {
       state.currentWorkouts = fallbackPlans[programKey];
       console.warn('Falling back to bundled workout plan.', err);
