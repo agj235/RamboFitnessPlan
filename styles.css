@@ -21,7 +21,7 @@ body::before {
   inset: 0;
   background:
     linear-gradient(180deg, rgba(11, 11, 11, 0.92), rgba(11, 11, 11, 0.98)),
-    url("fitnessLogo2.png") center/500px no-repeat;
+    url("images/rambo-logo.png") center/500px no-repeat;
   opacity: 0.18;
   filter: blur(12px) saturate(1.2);
   z-index: -1;
