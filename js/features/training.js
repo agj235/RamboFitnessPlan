@@ -1,9 +1,5 @@
 (function () {
-  const state = window.RamboAppState = window.RamboAppState || {
-    currentProgram: localStorage.getItem('currentProgram') || '5day',
-    currentWorkouts: [],
-    currentDay: Number(localStorage.getItem('currentDay') || 1)
-  };
+  const state = window.RamboAppState;
 
   const fallbackPlans = {
     '5day': [
@@ -34,7 +30,6 @@ function getWorkoutDataCandidates(programKey) {
     const cacheBuster = Date.now();
 
     const candidates = [
-        `/RamboFitnessPlan/data/${fileName}`,
         `./data/${fileName}`,
         `data/${fileName}`
     ];
@@ -134,15 +129,11 @@ function getWorkoutDataCandidates(programKey) {
   }
 
   function showDay(day) {
-    console.log("Saving Day:", day);
     state.currentDay = day;
-
-    // Save current workout day
     localStorage.setItem('currentDay', day);
-
     renderWorkouts();
     window.updateHomeSummary?.();
-}
+  }
 
   function changeDay(delta) {
     const dayPlans = getActiveWorkouts();
@@ -168,6 +159,7 @@ function getWorkoutDataCandidates(programKey) {
   function handleProgramChange(value) {
     state.currentProgram = value;
     localStorage.setItem('currentProgram', value);
+    window.RamboUserData?.queueSave('currentProgram', value);
     state.currentDay = 1;
     refreshProgram();
   }

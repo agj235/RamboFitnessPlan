@@ -1,7 +1,5 @@
 (function () {
-  const state = window.RamboAppState = window.RamboAppState || {
-    currentDay: 1
-  };
+  const state = window.RamboAppState;
 
   function syncDashboard(percent, completed, total, day = state.currentDay) {
     window.RamboUtils?.setText('dashPercent', percent + '%');

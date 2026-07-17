@@ -1,10 +1,5 @@
 (function () {
-  const state = window.RamboAppState = window.RamboAppState || {
-    currentUser: null,
-    currentProgram: localStorage.getItem('currentProgram') || '5day',
-    currentWorkouts: [],
-    currentDay: 1
-  };
+  const state = window.RamboAppState;
 
   const auth = () => window.RamboFirebase?.auth;
   const db = () => window.RamboFirebase?.db;
@@ -30,10 +25,18 @@
     setAuthUI(user);
 
     if (user) {
-      window.RamboTraining?.refreshProgram();
-      window.RamboTraining?.showDay(state.currentDay);
-      window.RamboStrength?.loadStrengthHistory?.();
-      window.RamboProgress?.syncDashboard(0, 0, 0, state.currentDay);
+      const finishLogin = () => {
+        window.RamboTraining?.refreshProgram();
+        window.RamboTraining?.showDay(state.currentDay);
+        window.RamboStrength?.loadStrengthHistory?.();
+        window.RamboProgress?.syncDashboard(0, 0, 0, state.currentDay);
+      };
+
+      if (window.RamboUserData?.loadFromCloud) {
+        window.RamboUserData.loadFromCloud(user.uid).then(finishLogin).catch(finishLogin);
+      } else {
+        finishLogin();
+      }
     } else {
       window.RamboUtils?.setText('loginStatus', 'Please sign in to continue.');
       window.RamboTraining?.showDay(1);
