@@ -1,7 +1,7 @@
 (function () {
   const state = window.RamboAppState;
 
-  const fallbackPlans = {
+  const previewPlans = {
     '5day': [
       { day: 1, title: 'Upper Body + Conditioning', exercises: ['Bench Press 4x8', 'Row 4x10', 'Burpees 3x20'] },
       { day: 2, title: 'Lower Body Strength', exercises: ['Squat 5x5', 'Romanian Deadlift 3x8', 'Lunges 3x12'] },
@@ -18,7 +18,7 @@
   };
 
   function getActiveWorkouts() {
-    return state.currentWorkouts?.length ? state.currentWorkouts : fallbackPlans[state.currentProgram || '5day'];
+    return state.currentWorkouts?.length ? state.currentWorkouts : previewPlans[state.currentProgram || '5day'];
   }
 
 function getWorkoutDataCandidates(programKey) {
@@ -142,19 +142,38 @@ function getWorkoutDataCandidates(programKey) {
     showDay(nextDay);
   }
 
-  async function refreshProgram() {
-    const programKey = state.currentProgram === '4day' ? '4day' : '5day';
+ async function refreshProgram() {
 
+    const programKey = state.currentProgram === '4day'
+      ? '4day'
+      : '5day';
+
+
+    // Preview users get fallback workouts
+    if (state.currentUser?.uid?.startsWith('preview-')) {
+
+        state.currentWorkouts = previewPlans[programKey];
+
+        renderWorkouts();
+
+        console.log("Preview workout plan loaded");
+
+        return;
+    }
+
+
+    // Registered users get full programs
     try {
-      const data = await loadWorkoutData(programKey);
-      state.currentWorkouts = data;
+        const data = await loadWorkoutData(programKey);
+        state.currentWorkouts = data;
+
     } catch (err) {
-      state.currentWorkouts = fallbackPlans[programKey];
-      console.warn('Falling back to bundled workout plan.', err);
+        state.currentWorkouts = previewPlans[programKey];
+        console.warn('Falling back to bundled workout plan.', err);
     }
 
     renderWorkouts();
-  }
+}
 
   function handleProgramChange(value) {
     state.currentProgram = value;
