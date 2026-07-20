@@ -16,8 +16,9 @@
       button.classList.toggle("active", button.dataset.view === viewName);
     });
 
-    const state = viewName === "home" ? "/" : `/${viewName}`;
-    history.replaceState({ view: viewName }, "", state);
+   const url = new URL(window.location.href);
+    url.hash = viewName === "home" ? "" : viewName;
+    history.replaceState({ view: viewName }, "", url);
   }
 
   function initNavigation() {
@@ -25,7 +26,7 @@
       button.addEventListener("click", () => setActiveView(button.dataset.view));
     });
 
-    const initialView = window.location.pathname.replace("/", "") || "home";
+    const initialView = (window.location.hash || "").replace("#", "") || "home";
     setActiveView(viewMap[initialView] ? initialView : "home");
   }
 
