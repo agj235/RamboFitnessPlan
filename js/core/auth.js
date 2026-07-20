@@ -21,28 +21,33 @@
   }
 
   function handleAuthState(user) {
-    state.currentUser = user;
-    setAuthUI(user);
+  state.currentUser = user;
+  setAuthUI(user);
 
-    if (user) {
-      const finishLogin = () => {
+  if (user) {
+    const programBeforeCloudLoad = state.currentProgram;
+
+    const finishLogin = () => {
+      if (state.currentProgram !== programBeforeCloudLoad) {
         window.RamboTraining?.refreshProgram();
-        window.RamboTraining?.showDay(state.currentDay);
-        window.RamboStrength?.loadStrengthHistory?.();
-        window.RamboProgress?.syncDashboard(0, 0, 0, state.currentDay);
-      };
-
-      if (window.RamboUserData?.loadFromCloud) {
-        window.RamboUserData.loadFromCloud(user.uid).then(finishLogin).catch(finishLogin);
       } else {
-        finishLogin();
+        window.RamboTraining?.showDay(state.currentDay);
       }
+      window.RamboStrength?.loadStrengthHistory?.();
+      window.RamboProgress?.syncDashboard(0, 0, 0, state.currentDay);
+    };
+
+    if (window.RamboUserData?.loadFromCloud) {
+      window.RamboUserData.loadFromCloud(user.uid).then(finishLogin).catch(finishLogin);
     } else {
-      window.RamboUtils?.setText('loginStatus', 'Please sign in to continue.');
-      window.RamboTraining?.showDay(1);
-      window.RamboProgress?.syncDashboard(0, 0, 0, 1);
+      finishLogin();
     }
+  } else {
+    window.RamboUtils?.setText('loginStatus', 'Please sign in to continue.');
+    window.RamboTraining?.showDay(1);
+    window.RamboProgress?.syncDashboard(0, 0, 0, 1);
   }
+}
 
   function getStoredPreviewUser() {
     try {
@@ -167,19 +172,71 @@
       });
   }
 
-  function logout() {
-    if (!auth()) {
-      clearPreviewUser();
-      state.currentUser = null;
-      handleAuthState(null);
-      return;
-    }
+  function skipPreview() {
 
-    auth().signOut().then(() => {
-      state.currentUser = null;
-      handleAuthState(null);
-    });
+  const previewUser = {
+    uid: `preview-${Math.random().toString(36).slice(2, 10)}`,
+    email: "guest@preview.com",
+    displayName: "Guest"
+  };
+
+  persistPreviewUser(previewUser);
+
+  state.currentUser = previewUser;
+
+  localStorage.setItem(
+    "appMode",
+    "preview"
+  );
+
+  handleAuthState(previewUser);
+}
+
+function logout() {
+
+  // Handle preview users
+  if (state.currentUser?.uid?.startsWith('preview-')) {
+
+    clearPreviewUser();
+
+    state.currentUser = null;
+    state.currentWorkouts = [];
+
+    localStorage.removeItem('appMode');
+    localStorage.removeItem('currentDay');
+
+    handleAuthState(null);
+
+    return;
   }
+
+
+  // Handle Firebase users
+  if (auth()) {
+
+    auth().signOut()
+      .then(() => {
+
+        state.currentUser = null;
+        state.currentWorkouts = [];
+
+        handleAuthState(null);
+
+      })
+      .catch((err) => {
+        console.error("Logout failed:", err);
+      });
+
+    return;
+  }
+
+
+  // Fallback
+  state.currentUser = null;
+  state.currentWorkouts = [];
+
+  handleAuthState(null);
+}
 
   function initAuth() {
     if (!auth()) {
@@ -201,6 +258,7 @@
     login,
     register,
     logout,
+    skipPreview,
     handleAuthState
   };
 })();
